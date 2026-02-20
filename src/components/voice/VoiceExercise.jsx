@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RotateCcw, Mic, Star, CheckCircle, ArrowRight, Timer, AlertCircle, Volume2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Button } from '../ui/button'
 import { Slider } from '../ui/slider'
-import { Badge } from '../ui/badge'
 import { mockEntityOperations, updateUserStats, logActivity } from '../../lib/utils'
 import { voiceExercises } from '../../lib/mockData'
 

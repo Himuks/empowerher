@@ -6,7 +6,6 @@ import {
   Heart, MessageCircle, ThumbsUp, Send, Clock, Star, MapPin, Globe, Calendar,
   CheckCircle, X, ChevronDown, ChevronUp, Briefcase, User, Sparkles
 } from 'lucide-react'
-import { Badge } from '../components/ui/badge'
 import ResourceCard from '../components/resources/ResourceCard'
 import HelplineCard from '../components/resources/HelplineCard'
 import {

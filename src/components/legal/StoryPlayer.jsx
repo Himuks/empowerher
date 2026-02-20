@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight, CheckCircle, XCircle, Star, BookOpen, Zap, Award } from 'lucide-react'
-import { Button } from '../ui/button'
 import { Progress } from '../ui/progress'
 import { mockEntityOperations, updateUserStats, logActivity } from '../../lib/utils'
 import { storyScenarios } from '../../lib/mockData'

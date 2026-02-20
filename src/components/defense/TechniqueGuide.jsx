@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, Target, AlertTriangle, CheckCircle, Star, ArrowRight, Hand, Eye, PlayCircle, Pause } from 'lucide-react'
-import { Button } from '../ui/button'
 import { Slider } from '../ui/slider'
 import { mockEntityOperations, updateUserStats, logActivity } from '../../lib/utils'
 import { defenseTechniques } from '../../lib/mockData'

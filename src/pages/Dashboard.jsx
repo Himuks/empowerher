@@ -11,7 +11,6 @@ import {
   TrendingUp,
   Award
 } from 'lucide-react'
-import { Progress } from '../components/ui/progress'
 import StreakCounter from '../components/dashboard/StreakCounter'
 import LevelProgress from '../components/dashboard/LevelProgress'
 import DailyChallenge from '../components/dashboard/DailyChallenge'

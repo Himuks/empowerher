@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Download, FileText, BookOpen, CheckSquare, ExternalLink, Star, X, CheckCircle
+  Download, FileText, BookOpen, CheckSquare, ExternalLink, X, CheckCircle
 } from 'lucide-react'
 import { downloadResource, generateResourceContent } from '../../lib/utils'
 
