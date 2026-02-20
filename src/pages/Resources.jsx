@@ -312,7 +312,6 @@ const ArticlesModal = ({ onClose }) => {
 // ─── Counselor Directory Modal ────────────────────────────────────────────────
 const CounselorModal = ({ onClose }) => {
   const [bookedCounselors, setBookedCounselors] = useState([])
-  const [selectedCounselor, setSelectedCounselor] = useState(null)
 
   const handleBook = async (counselorId) => {
     setBookedCounselors([...bookedCounselors, counselorId])

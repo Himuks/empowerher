@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Play,
-  Pause,
   RotateCcw,
   Mic,
   Star,
@@ -374,8 +372,8 @@ const VoiceExercise = ({
 
                     {feedback && (
                       <div className={`p-3 rounded-lg flex items-start space-x-2 text-sm ${feedback.type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
-                          feedback.type === 'warning' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                            'bg-red-100 text-red-800 border border-red-200'
+                        feedback.type === 'warning' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                          'bg-red-100 text-red-800 border border-red-200'
                         }`}>
                         {feedback.type === 'success' ? <CheckCircle className="w-4 h-4 mt-0.5 shrink-0" /> : <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />}
                         <span className="font-medium">{feedback.message}</span>
