@@ -99,7 +99,7 @@ const VoiceExercise = ({ standalone = false, lessonId = "", lessonTitle = "", on
         <div className="glass-card p-5">
           <div className="flex items-center space-x-2 mb-3"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center"><Mic className="w-4 h-4 text-white" /></div><h3 className="font-display font-bold text-white text-sm">Daily Voice Practice</h3></div>
           <p className="text-xs text-slate-400 italic mb-3">"The most courageous act is still to think for yourself. Aloud."</p>
-          <Button className="w-full bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white"><Volume2 className="w-4 h-4 mr-2" />Go to Voice Training</Button>
+          <button className="w-full bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center"><Volume2 className="w-4 h-4 mr-2" />Go to Voice Training</button>
         </div>
       </motion.div>
     )
