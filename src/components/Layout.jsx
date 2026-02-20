@@ -12,14 +12,21 @@ import {
   Menu,
   X,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  LogIn,
+  LogOut
 } from 'lucide-react'
 import { cn, getOverallProgress } from '../lib/utils'
+import { useAuth } from './AuthContext'
+import AuthModal from './AuthModal'
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [journeyProgress, setJourneyProgress] = useState(0)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const location = useLocation()
+  const { user, isLoggedIn, logout } = useAuth()
 
   useEffect(() => {
     const loadProgress = async () => {
@@ -28,6 +35,13 @@ const Layout = ({ children }) => {
     }
     loadProgress()
   }, [location.pathname])
+
+  // Close user menu on outside click
+  useEffect(() => {
+    const handleClick = () => setUserMenuOpen(false)
+    if (userMenuOpen) document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [userMenuOpen])
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home, gradient: 'from-rose-500 to-pink-600' },
@@ -38,19 +52,75 @@ const Layout = ({ children }) => {
     { name: 'Emergency', href: '/emergency', icon: Phone, gradient: 'from-red-500 to-rose-600' },
   ]
 
+  const UserButton = () => {
+    if (isLoggedIn) {
+      const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'
+      return (
+        <div className="relative">
+          <button
+            onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen) }}
+            className="flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-white/[0.06] transition-colors group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-rose-500/20">
+              {initials}
+            </div>
+            <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors hidden md:block">{user.name?.split(' ')[0]}</span>
+          </button>
+          <AnimatePresence>
+            {userMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-full mt-2 w-56 rounded-2xl overflow-hidden border border-white/[0.08] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-50"
+              >
+                <div className="p-4 border-b border-white/[0.06]">
+                  <p className="text-sm font-semibold text-white truncate">{user.name}</p>
+                  <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                </div>
+                <div className="p-2">
+                  <button
+                    onClick={() => { logout(); setUserMenuOpen(false) }}
+                    className="w-full flex items-center space-x-2 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )
+    }
+
+    return (
+      <button
+        onClick={() => setAuthModalOpen(true)}
+        className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500/10 to-purple-600/10 border border-rose-500/20 hover:border-rose-500/40 hover:bg-rose-500/15 transition-all duration-300 group"
+      >
+        <LogIn className="w-4 h-4 text-rose-400 group-hover:text-rose-300 transition-colors" />
+        <span className="text-sm font-semibold text-rose-300 group-hover:text-rose-200 transition-colors">Login</span>
+      </button>
+    )
+  }
+
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center space-x-3 p-6 border-b border-white/[0.06]">
-        <div className="relative">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-purple-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
-            <Heart className="w-5 h-5 text-white" />
+      <div className="flex items-center justify-between p-6 border-b border-white/[0.06]">
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-purple-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
+              <Heart className="w-5 h-5 text-white" />
+            </div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 to-purple-600 rounded-xl blur opacity-20 animate-glow-pulse" />
           </div>
-          <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 to-purple-600 rounded-xl blur opacity-20 animate-glow-pulse" />
-        </div>
-        <div>
-          <h1 className="text-lg font-display font-bold text-white tracking-tight">EmpowerHer</h1>
-          <p className="text-xs text-slate-400 font-medium">Training Platform</p>
+          <div>
+            <h1 className="text-lg font-display font-bold text-white tracking-tight">EmpowerHer</h1>
+            <p className="text-xs text-slate-400 font-medium">Training Platform</p>
+          </div>
         </div>
       </div>
 
@@ -138,6 +208,9 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen aurora-bg">
+      {/* Auth Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
       {/* Mobile overlay */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -193,10 +266,15 @@ const Layout = ({ children }) => {
             </div>
             <span className="font-display font-bold text-white">EmpowerHer</span>
           </div>
-          <div className="w-10" />
+          <UserButton />
         </div>
 
-        <main className="p-4 lg:p-8">
+        {/* Desktop top-right user area */}
+        <div className="hidden lg:flex items-center justify-end p-4 sticky top-0 z-30">
+          <UserButton />
+        </div>
+
+        <main className="p-4 lg:p-8 lg:pt-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

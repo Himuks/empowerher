@@ -18,7 +18,8 @@ import QuickActions from '../components/dashboard/QuickActions'
 import AchievementBadges from '../components/dashboard/AchievementBadges'
 import RecentActivity from '../components/dashboard/RecentActivity'
 import KnowledgeQuiz from '../components/dashboard/KnowledgeQuiz'
-import { mockEntityOperations, User, getOverallProgress } from '../lib/utils'
+import { useAuth } from '../components/AuthContext'
+import { mockEntityOperations, getOverallProgress } from '../lib/utils'
 
 const StatCard = ({ label, value, icon: Icon, gradient, glowClass, delay = 0 }) => (
   <motion.div
@@ -44,7 +45,7 @@ const StatCard = ({ label, value, icon: Icon, gradient, glowClass, delay = 0 }) 
 )
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null)
+  const { user: authUser, isLoggedIn } = useAuth()
   const [userStats, setUserStats] = useState(null)
   const [overallProgress, setOverallProgress] = useState(0)
   const [lessonsCompleted, setLessonsCompleted] = useState(0)
@@ -53,8 +54,6 @@ const Dashboard = () => {
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        const currentUser = await User.me()
-        setUser(currentUser)
         const statsData = await mockEntityOperations.list('UserStats')
         let stats = statsData[0]
         if (!stats) {
@@ -117,7 +116,7 @@ const Dashboard = () => {
               transition={{ delay: 0.1 }}
               className="text-3xl md:text-4xl font-display font-extrabold text-white tracking-tight"
             >
-              Welcome back, {user?.firstName || 'Warrior'}! <span className="inline-block animate-float">💪</span>
+              {isLoggedIn ? `Welcome back, ${authUser.name?.split(' ')[0]}!` : 'Welcome!'} <span className="inline-block animate-float">💪</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, x: -20 }}

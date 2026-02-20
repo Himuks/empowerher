@@ -74,14 +74,14 @@ export const User = {
   me: async () => {
     const stored = localStorage.getItem('empowerher_currentUser')
     if (stored) return JSON.parse(stored)
+    // Guest user — no hardcoded name
     const defaultUser = {
-      id: 'current_user',
-      firstName: 'Sarah',
-      lastName: 'Johnson',
-      email: 'sarah@example.com',
-      joinedAt: '2024-01-15'
+      id: 'guest',
+      firstName: '',
+      lastName: '',
+      email: '',
+      joinedAt: new Date().toISOString()
     }
-    localStorage.setItem('empowerher_currentUser', JSON.stringify(defaultUser))
     return defaultUser
   },
 
@@ -227,8 +227,8 @@ export const getModulePoints = async (moduleType) => {
 
 export const getOverallProgress = async () => {
   const progress = await mockEntityOperations.list('TrainingProgress')
-  // Total possible lessons: 6 (2 legal + 2 voice + 2 defense)
-  const totalPossible = 6
+  // Total possible lessons: 12  (4 legal + 4 voice + 4 defense)
+  const totalPossible = 12
   const completed = progress.filter(p => p.completion_percentage === 100).length
   return Math.round((completed / totalPossible) * 100)
 }

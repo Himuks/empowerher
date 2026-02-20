@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './components/AuthContext'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import LegalRights from './pages/LegalRights'
@@ -16,18 +17,20 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/legal-rights" element={<LegalRights />} />
-          <Route path="/voice-training" element={<VoiceTraining />} />
-          <Route path="/self-defense" element={<SelfDefense />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/emergency" element={<Emergency />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/legal-rights" element={<LegalRights />} />
+            <Route path="/voice-training" element={<VoiceTraining />} />
+            <Route path="/self-defense" element={<SelfDefense />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/emergency" element={<Emergency />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </AuthProvider>
   )
 }
 

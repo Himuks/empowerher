@@ -58,7 +58,15 @@ export const mockChallenges = [
   { title: "Situational Awareness", description: "Practice being aware of exits and surroundings in every new place you enter today.", points: 15, category: "Self Defense" },
   { title: "Support Network", description: "Reach out to one person in your support network and have a meaningful conversation.", points: 10, category: "Community" },
   { title: "Digital Safety Audit", description: "Review your social media privacy settings and update passwords on one account.", points: 15, category: "Safety" },
-  { title: "Express an Opinion", description: "Share your honest opinion in at least one conversation today without apologizing for it.", points: 12, category: "Voice Training" }
+  { title: "Express an Opinion", description: "Share your honest opinion in at least one conversation today without apologizing for it.", points: 12, category: "Voice Training" },
+  { title: "Financial Empowerment", description: "Review your monthly budget and identify one area where you can save or invest for yourself.", points: 15, category: "Legal Knowledge" },
+  { title: "Grounding Exercise", description: "Practice the 5-4-3-2-1 grounding technique: identify 5 things you see, 4 you hear, 3 you touch, 2 you smell, 1 you taste.", points: 10, category: "Mental Health" },
+  { title: "Escape Route Mapping", description: "In your home, identify all exits and plan two escape routes. Practice walking them once.", points: 20, category: "Self Defense" },
+  { title: "Cyber Hygiene Check", description: "Enable two-factor authentication on at least two of your most important accounts.", points: 15, category: "Safety" },
+  { title: "Negotiation Practice", description: "Practice asking for something you want today using the DESC script: Describe, Express, Specify, Consequences.", points: 15, category: "Voice Training" },
+  { title: "Self-Compassion Break", description: "Write down 3 things you're proud of about yourself. Read them aloud. You deserve to hear your own kindness.", points: 10, category: "Mental Health" },
+  { title: "Know a Helpline", description: "Memorize one new helpline number today. Test your memory 3 hours later.", points: 10, category: "Safety" },
+  { title: "Power Pose Practice", description: "Hold a power pose (hands on hips, chest open) for 2 minutes before an important interaction today.", points: 12, category: "Voice Training" }
 ]
 
 // ─── Legal Rights Story Scenarios ─────────────────────────────────────────────
@@ -241,6 +249,174 @@ export const storyScenarios = {
       ],
       learning: 'Under the Legal Services Authorities Act, every woman is entitled to free legal aid regardless of income. NALSA helpline: 15100. District offices provide free advocates and legal assistance.'
     }
+  ],
+  cyber_harassment: [
+    {
+      id: 1,
+      title: 'Online Stalking',
+      character: 'Riya',
+      context: 'You discover someone has been creating fake profiles and messaging your contacts with false information about you.',
+      story: 'An ex-acquaintance has created multiple fake social media profiles impersonating you. They\'ve been sending offensive messages to your colleagues and family members. Your reputation is being damaged, and you\'re receiving angry calls from people who think the messages are from you.',
+      choices: [
+        { text: 'Screenshot all evidence, report profiles to platforms, and file a complaint under IT Act Section 66D and Section 354D IPC', correct: true, points: 15, feedback: 'Perfect! Impersonation online is punishable under IT Act Section 66D (up to 3 years). Cyberstalking is under Section 354D IPC. Screenshot everything with timestamps before reporting.' },
+        { text: 'Create counter-profiles to expose the person publicly', correct: false, points: 0, feedback: 'Public retaliation can complicate your legal case and may itself attract legal consequences. Focus on documenting evidence and using legal channels.' },
+        { text: 'Deactivate all your social media accounts and wait for it to stop', correct: false, points: 3, feedback: 'While protecting yourself is important, deactivating accounts doesn\'t address the crime. The behavior typically escalates. Document everything and seek legal remedy.' }
+      ],
+      learning: 'Online impersonation is punishable under IT Act Section 66D (up to 3 years imprisonment). Cyberstalking falls under Section 354D IPC. Always preserve digital evidence before reporting.'
+    },
+    {
+      id: 2,
+      title: 'Intimate Image Threats',
+      character: 'Riya',
+      context: 'Someone is threatening to share your private photos online unless you comply with their demands.',
+      story: 'You receive a threatening message from an anonymous number saying they have intimate photos of you (either real or morphed) and will share them online unless you pay money. You\'re terrified and don\'t know what to do.',
+      choices: [
+        { text: 'Do NOT pay — screenshot the threats, file a complaint at cybercrime.gov.in and local police under IT Act Section 66E', correct: true, points: 15, feedback: 'Correct! This is extortion and a violation of privacy. IT Act Section 66E (voyeurism), Section 67/67A (publishing obscene material), and IPC Section 384 (extortion) all apply. Never pay — it only leads to more demands.' },
+        { text: 'Pay the amount to prevent the photos from being shared', correct: false, points: 0, feedback: 'Paying never stops the abuse — it typically escalates demands. This is a serious crime and you have strong legal protection. Report immediately.' },
+        { text: 'Try to track down and confront the person yourself', correct: false, points: 2, feedback: 'Confronting the person could be dangerous and compromise the investigation. Let law enforcement handle the tracking. Focus on preserving evidence and filing a complaint.' }
+      ],
+      learning: 'Threats to share intimate images are punishable under multiple laws: IT Act Section 66E (privacy), Section 67 (obscene content), and IPC Section 384 (extortion). Report to cybercrime.gov.in or call 1930.'
+    }
+  ],
+  privacy_rights: [
+    {
+      id: 1,
+      title: 'Workplace Surveillance',
+      character: 'Nisha',
+      context: 'Your employer has installed hidden cameras in changing areas and your personal workspace.',
+      story: 'You discover a small camera hidden in the changing room at your office. When you bring it up to a colleague, she says others have noticed too but were afraid to speak up. Your privacy has been clearly violated.',
+      choices: [
+        { text: 'Document the discovery, report to the ICC and police under IT Act Section 66E (violation of privacy)', correct: true, points: 15, feedback: 'Absolutely right! Hidden cameras in private spaces violate IT Act Section 66E (capture/publication of private images) punishable by up to 3 years. Also report to the Internal Complaints Committee as this constitutes workplace harassment.' },
+        { text: 'Remove the camera and destroy it as evidence', correct: false, points: 0, feedback: 'Destroying evidence weakens your case. Document it (photograph it in place) and report it. Let authorities handle the removal as part of their investigation.' },
+        { text: 'Quietly tell HR and hope they handle it', correct: false, points: 5, feedback: 'While informing HR is part of the process, this is a criminal offense requiring police involvement. Don\'t rely solely on internal processes for a crime this serious.' }
+      ],
+      learning: 'Hidden cameras in private spaces violate IT Act Section 66E. Photographing or recording someone in private without consent is punishable by up to 3 years imprisonment.'
+    },
+    {
+      id: 2,
+      title: 'Data Privacy Breach',
+      character: 'Nisha',
+      context: 'Your personal information (phone number, address, photos) has been shared on a public forum without your consent.',
+      story: 'You discover your phone number, home address, and personal photos have been posted on a public forum with vulgar comments. You\'re receiving harassing calls from strangers. You feel unsafe in your own home.',
+      choices: [
+        { text: 'Report to the platform for immediate takedown, file police complaint under IT Act Section 72 (breach of confidentiality), and change your phone number', correct: true, points: 15, feedback: 'Correct approach! IT Act Section 72 addresses breach of confidentiality. Also applicable: Section 66E for private images. Request immediate takedown from the platform, file a police complaint, and take steps to secure your safety.' },
+        { text: 'Post a public message asking whoever did this to stop', correct: false, points: 0, feedback: 'Public appeals rarely work and may draw more attention to the leaked information. Use legal channels — they\'re faster and more effective.' },
+        { text: 'Only change your phone number and move on', correct: false, points: 3, feedback: 'While changing your number protects you short-term, the information remains public. You need to get it taken down and hold the perpetrator accountable through legal action.' }
+      ],
+      learning: 'Sharing someone\'s personal data without consent violates IT Act Section 72 (breach of confidentiality) and potentially Section 66E. Platforms are legally required to remove such content when reported.'
+    }
+  ],
+  reporting_cybercrime: [
+    {
+      id: 1,
+      title: 'Filing a Cyber Crime Complaint',
+      character: 'Aisha',
+      context: 'You need to report online harassment but don\'t know the proper process.',
+      story: 'You\'ve been receiving threatening emails and messages for weeks. You\'ve screenshotted everything. Now you\'re ready to report but feel overwhelmed. Your local police station told you to "just block them."',
+      choices: [
+        { text: 'File a complaint at cybercrime.gov.in, call 1930, and if local police refuse, approach the Cyber Crime Cell directly or file with the Magistrate', correct: true, points: 15, feedback: 'Perfect! The National Cyber Crime Portal (cybercrime.gov.in) accepts complaints online. The helpline 1930 provides guidance. If local police refuse, approach the dedicated Cyber Crime Cell or file under Section 156(3) CrPC with the Magistrate.' },
+        { text: 'Just block the harasser and hope they stop', correct: false, points: 2, feedback: 'Blocking may stop direct contact but doesn\'t address the crime. Harassers often escalate or use alternate accounts. Filing a report creates a legal record and can lead to prosecution.' },
+        { text: 'Hire a private investigator to find the person', correct: false, points: 3, feedback: 'Law enforcement has better tools for cyber investigation. Filing an official complaint gives police the authority to trace IP addresses and digital footprints — something private investigators cannot legally do.' }
+      ],
+      learning: 'Report cyber crimes at cybercrime.gov.in or call 1930. If local police refuse, approach the Cyber Crime Cell or file with the Magistrate under Section 156(3) CrPC.'
+    },
+    {
+      id: 2,
+      title: 'Preserving Digital Evidence',
+      character: 'Aisha',
+      context: 'You need to properly preserve digital evidence for your cyber crime case.',
+      story: 'Your lawyer says your case needs strong digital evidence. You have screenshots but they told you some evidence might not be admissible. You need to ensure everything is properly preserved.',
+      choices: [
+        { text: 'Take screenshots with visible timestamps and URLs, save to cloud backup, get witnesses to verify, and don\'t modify original content', correct: true, points: 15, feedback: 'Excellent! Screenshots must show URLs, timestamps, and context. Save copies in multiple locations. Having witnesses verify the screenshots adds credibility. Under the Indian Evidence Act, electronic records are admissible as evidence.' },
+        { text: 'Print all the screenshots and delete the digital copies for safety', correct: false, points: 3, feedback: 'Don\'t delete digital copies! Courts often require original electronic evidence. Print copies as backup, but maintain digital originals. Electronic records under the IT Act form stronger evidence.' },
+        { text: 'Edit the screenshots to highlight the important parts before submitting', correct: false, points: 0, feedback: 'Never edit evidence! Modified screenshots can be challenged and dismissed in court. Submit original, unmodified evidence and let your lawyer highlight relevant portions.' }
+      ],
+      learning: 'Digital evidence must be unmodified, with visible timestamps and URLs. Under the Indian Evidence Act, electronic records are admissible. Save copies in multiple secure locations and get witnesses to verify.'
+    }
+  ],
+  maintenance_rights: [
+    {
+      id: 1,
+      title: 'Claiming Maintenance After Separation',
+      character: 'Geeta',
+      context: 'After separating from your husband, you have no income and two children to support.',
+      story: 'You separated from your husband 6 months ago. He earns well but has stopped providing any financial support. You have two young children and no income of your own. Your in-laws say you "chose to leave" so you deserve nothing.',
+      choices: [
+        { text: 'File for maintenance under Section 125 CrPC — you and your children are entitled to financial support regardless of who initiated the separation', correct: true, points: 15, feedback: 'Correct! Section 125 CrPC provides maintenance rights to wives and children regardless of religion or who initiated separation. The court considers the husband\'s income and the wife\'s needs. You can also seek interim maintenance while the case is pending.' },
+        { text: 'Get a job first and then think about maintenance', correct: false, points: 3, feedback: 'While employment is empowering, your maintenance rights don\'t depend on your employment status. You can and should file for maintenance immediately — it\'s your legal right, especially with children to support.' },
+        { text: 'Accept the situation since you were the one who left', correct: false, points: 0, feedback: 'Who initiated separation is irrelevant to maintenance rights. Section 125 CrPC exists specifically to prevent women and children from being left destitute. Your right to maintenance is not affected by who left whom.' }
+      ],
+      learning: 'Section 125 CrPC provides maintenance to wives and children regardless of religion or fault. Interim maintenance can be ordered while the case is pending. The amount considers the husband\'s income and family needs.'
+    },
+    {
+      id: 2,
+      title: 'Maintenance During Marriage',
+      character: 'Geeta',
+      context: 'Your husband controls all finances and gives you no money for personal or household needs.',
+      story: 'Despite your husband earning a good salary, he gives you barely enough for groceries and nothing for personal needs. He monitors every rupee you spend and considers his salary "his money." You feel completely financially dependent and trapped.',
+      choices: [
+        { text: 'Recognize this as economic abuse under PWDVA and claim maintenance — a wife has the right to financial support during marriage', correct: true, points: 15, feedback: 'Correct! Financial control is recognized as economic abuse under PWDVA 2005. You can claim maintenance during marriage under Section 125 CrPC or Hindu Marriage Act Section 24 (for Hindus). A wife has equal right to the husband\'s income for household and personal needs.' },
+        { text: 'Start secretly saving from the grocery money', correct: false, points: 5, feedback: 'While having emergency savings is wise, this doesn\'t address the fundamental problem. Financial abuse is a recognized form of domestic violence and you have legal remedies available.' },
+        { text: 'Ask relatives to speak to your husband about giving you more money', correct: false, points: 3, feedback: 'While family mediation can help, economic abuse is a legal issue, not just a family matter. Under PWDVA 2005, you can get a court order for monetary relief.' }
+      ],
+      learning: 'Financial control during marriage is economic abuse under PWDVA 2005. Wives can claim maintenance during marriage under Section 125 CrPC. Courts can order the husband to provide for household and personal needs.'
+    }
+  ],
+  streedhan: [
+    {
+      id: 1,
+      title: 'Reclaiming Streedhan',
+      character: 'Lata',
+      context: 'Your in-laws took all your gold jewelry and gifts received at your wedding, claiming they belong to the family.',
+      story: 'During the wedding, you received gold jewelry and cash gifts from your parents and relatives. Your mother-in-law took everything "for safekeeping." Now, after 5 years, when you ask for your jewelry, she says it belongs to the family and was used for household expenses.',
+      choices: [
+        { text: 'Assert your right to Streedhan — all gifts given to the bride are her exclusive property, and file for recovery if needed', correct: true, points: 15, feedback: 'Correct! Streedhan (gifts given to the bride before, during, or after marriage) is the woman\'s absolute property. no one — not even the husband or in-laws — has the right to use it without her permission. You can file a complaint under IPC Section 406 (criminal breach of trust) for its recovery.' },
+        { text: 'Accept the loss to maintain family harmony', correct: false, points: 0, feedback: 'Your Streedhan is your legal right, not a gift to the family. Accepting this sets a precedent for further financial abuse. The law specifically protects Streedhan as the woman\'s exclusive property.' },
+        { text: 'Ask your parents to speak to your in-laws', correct: false, points: 3, feedback: 'While family dialogue can help, Streedhan is a legal right with criminal penalties for violation. If your in-laws refuse to return it, you can file under IPC Section 406.' }
+      ],
+      learning: 'Streedhan is a woman\'s exclusive property — gifts given before, during, or after marriage. Using it without her consent is criminal breach of trust under IPC Section 406, punishable by up to 3 years.'
+    },
+    {
+      id: 2,
+      title: 'Dowry Demand After Marriage',
+      character: 'Lata',
+      context: 'Your in-laws are demanding additional dowry after the wedding, threatening to "send you back."',
+      story: 'Six months after your wedding, your in-laws start demanding a car and cash, saying your parents "didn\'t give enough." They\'ve become verbally abusive and your husband says "just tell your father to help or there will be problems."',
+      choices: [
+        { text: 'Recognize this as dowry demand (Dowry Prohibition Act), document everything, and report to police — dowry demand is a criminal offense', correct: true, points: 15, feedback: 'Correct! The Dowry Prohibition Act 1961 makes demanding dowry a criminal offense punishable by up to 5 years imprisonment. Document all demands (texts, recordings, witnesses) and file a complaint. You are also protected under IPC Section 498A (cruelty) and PWDVA 2005.' },
+        { text: 'Ask your parents to give what they can to keep the peace', correct: false, points: 0, feedback: 'Giving into dowry demands is illegal for both parties and typically leads to escalating demands. The Dowry Prohibition Act makes both giving and receiving dowry illegal. Your safety and rights come first.' },
+        { text: 'Ignore the demands and hope they stop', correct: false, points: 2, feedback: 'Dowry demands typically escalate and can lead to physical violence. Don\'t wait for the situation to worsen. Document everything and seek help immediately.' }
+      ],
+      learning: 'The Dowry Prohibition Act 1961 makes dowry demands punishable by up to 5 years imprisonment. Along with IPC 498A and PWDVA, women have strong legal protection against dowry-related abuse.'
+    }
+  ],
+  financial_independence: [
+    {
+      id: 1,
+      title: 'Opening an Independent Bank Account',
+      character: 'Farida',
+      context: 'Your husband insists on a joint account and refuses to let you have financial autonomy.',
+      story: 'You want to open your own bank account to start saving, but your husband says "married women don\'t need separate accounts" and "what are you hiding?" He monitors all your spending and makes you feel guilty about wanting financial independence.',
+      choices: [
+        { text: 'You have every right to your own bank account — open one independently and start building financial autonomy', correct: true, points: 15, feedback: 'Absolutely! Every woman has the right to open and operate her own bank account. No permission from a spouse is needed. Financial independence is crucial for safety and empowerment. Many government schemes (Jan Dhan Yojana) support women\'s financial inclusion.' },
+        { text: 'Agree to keep the joint account to avoid conflict', correct: false, points: 2, feedback: 'Having only a joint account means financial dependency. While you can maintain the joint account, having your own independent account is essential for financial safety and autonomy.' },
+        { text: 'Ask a relative to open an account in their name for you to use', correct: false, points: 3, feedback: 'Using someone else\'s account creates complications and dependency. You have the legal right to your own account — exercise it directly.' }
+      ],
+      learning: 'Every woman has the fundamental right to open independent bank accounts. Financial autonomy is a key element of personal safety. Government schemes like PM Jan Dhan Yojana specifically support women\'s financial inclusion.'
+    },
+    {
+      id: 2,
+      title: 'Understanding Property in Your Name',
+      character: 'Farida',
+      context: 'You contributed to buying your home but the property is only in your husband\'s name.',
+      story: 'Over the years, your salary contributed significantly to the EMI payments on your home. However, the property is solely in your husband\'s name. With the marriage becoming difficult, you\'re worried about your rights to the property you helped pay for.',
+      choices: [
+        { text: 'Document your financial contributions — you have a legal claim to property you helped purchase, and can seek your share through court', correct: true, points: 15, feedback: 'Correct! If you contributed financially, you have a legal claim regardless of whose name is on the title. Maintain bank statements showing your EMI payments. Under PWDVA, you also have the right to reside in the shared household.' },
+        { text: 'Accept that property belongs to whoever\'s name is on the papers', correct: false, points: 0, feedback: 'Legal ownership isn\'t just about the name on papers. If you contributed financially, courts recognize your claim. Document all contributions — bank transfers, EMI receipts, joint investments.' },
+        { text: 'Transfer all your future savings to your parents\' account for safety', correct: false, points: 3, feedback: 'While protecting your finances is important, this doesn\'t address your rightful claim to the property. Document your contributions and consult a lawyer about your property rights.' }
+      ],
+      learning: 'Financial contributions to property create legal claims regardless of whose name is on the title. Under PWDVA 2005, women also have the right to reside in the shared household. Always maintain financial records.'
+    }
   ]
 }
 
@@ -296,6 +472,58 @@ export const voiceExercises = {
       scenario: "A team member proposes an approach you believe is flawed. You need to voice your disagreement constructively.",
       practicePhrase: "I see your reasoning, but I have a different perspective. Here's what concerns me about that approach...",
       tips: ["Acknowledge the other person's point first", "Focus on the idea, not the person", "Offer an alternative solution", "Use data and examples to support your view"]
+    }
+  ],
+  workplace_negotiation: [
+    {
+      title: "Asking for a raise",
+      scenario: "You've been at your job for two years with great reviews, but your salary hasn't kept up. It's time for a conversation.",
+      practicePhrase: "Based on my contributions and the market rate for this role, I'd like to discuss a salary adjustment to reflect my value.",
+      tips: ["Research market rates beforehand", "Bring concrete examples of your achievements", "Practice the conversation out loud", "Have a specific number in mind", "Be prepared for negotiation"]
+    },
+    {
+      title: "Negotiating flexible work",
+      scenario: "You need a more flexible schedule but are afraid your manager will see you as less committed.",
+      practicePhrase: "I'd like to propose a flexible schedule that maintains my productivity while accommodating my needs. Here's my plan...",
+      tips: ["Frame it as a productivity benefit", "Come with a specific proposal", "Offer a trial period", "Show how output will remain the same or improve"]
+    },
+    {
+      title: "Claiming credit for your work",
+      scenario: "A colleague presented your idea as their own in a meeting. You need to address this without creating hostility.",
+      practicePhrase: "I'm glad that idea resonated. I'd like to add some context since I developed it — here's the thinking behind it.",
+      tips: ["Address it in the moment when possible", "Be factual, not emotional", "Follow up with an email documenting your contribution", "Talk privately with the colleague afterward"]
+    },
+    {
+      title: "Pushing back on unfair workload",
+      scenario: "You consistently get assigned more work than peers. When you raise it, you're told you're 'so reliable.'",
+      practicePhrase: "I appreciate your confidence in me. However, my current workload isn't sustainable. Let's prioritize which tasks are most critical.",
+      tips: ["Keep a log of your tasks vs peers' tasks", "Use data to show the imbalance", "Suggest a redistribution rather than just complaining", "Set clear limits on capacity"]
+    }
+  ],
+  handling_conflict: [
+    {
+      title: "De-escalating an argument",
+      scenario: "A heated discussion with a friend is turning personal. You want to resolve the issue without damaging the relationship.",
+      practicePhrase: "I can see we both feel strongly about this. Let's take a breath and try to understand each other's perspective.",
+      tips: ["Lower your voice as tension rises", "Use 'we' language instead of 'you'", "Acknowledge the other person's feelings", "Suggest a break if emotions are too high"]
+    },
+    {
+      title: "Addressing passive-aggressive behavior",
+      scenario: "A coworker keeps making sarcastic remarks about your work. You need to address it directly.",
+      practicePhrase: "I've noticed some comments that seem directed at my work. I'd like to discuss any feedback openly so we can work better together.",
+      tips: ["Name the behavior specifically and calmly", "Don't mirror the passive-aggression", "Give them a chance to explain", "Set a clear expectation for future communication"]
+    },
+    {
+      title: "Setting emotional boundaries",
+      scenario: "A family member uses guilt to manipulate your decisions. Every choice you make is met with 'After everything I've done for you...'",
+      practicePhrase: "I love you and appreciate everything you've done. But I need to make decisions that are right for my life, and I hope you can support that.",
+      tips: ["Recognize guilt-tripping as a manipulation tactic", "Stay calm and don't engage in the guilt cycle", "Reaffirm love while maintaining your position", "It's okay to end the conversation if it becomes toxic"]
+    },
+    {
+      title: "Responding to gaslighting",
+      scenario: "Someone keeps telling you 'That never happened' or 'You're overreacting' when you raise valid concerns.",
+      practicePhrase: "I trust my own experience and memory. I'm not overreacting — my feelings are valid, and this is what happened.",
+      tips: ["Keep a journal of events for your own validation", "Trust your own perception", "Don't argue about reality — state your truth and disengage", "Seek support from a trusted third party"]
     }
   ]
 }
@@ -395,6 +623,100 @@ export const defenseTechniques = {
       whenToUse: "When you sense potential danger but have NOT been physically touched",
       safetyNote: "Prevention and avoidance are ALWAYS the best self-defense — never feel bad about avoiding a situation"
     }
+  ],
+  situational_awareness: [
+    {
+      name: "The Color Code of Awareness",
+      description: "A mental framework used by law enforcement to maintain appropriate levels of alertness.",
+      difficulty: "Beginner",
+      steps: [
+        "White (Unaware): Avoid this state in public — headphones in, eyes on phone",
+        "Yellow (Relaxed Alert): Your default state — aware of surroundings, noticing who's around",
+        "Orange (Specific Alert): Something has caught your attention — a person following, a car circling",
+        "Red (Action): You've confirmed a threat — execute your safety plan, call for help",
+        "Practice transitioning between states consciously throughout the day"
+      ],
+      tips: ["Practice Yellow state in everyday life", "Notice exits in every room you enter", "Watch people's hands, not their faces", "Be especially alert in transitional spaces (parking lots, stairwells, elevators)"],
+      whenToUse: "At all times when in public spaces",
+      safetyNote: "Awareness is not paranoia — it's paying attention with purpose"
+    },
+    {
+      name: "Environment Scanning",
+      description: "How to quickly assess any new environment for safety and plan your exit strategy.",
+      difficulty: "Beginner",
+      steps: [
+        "On entering any space, immediately locate all exits (doors, windows, fire escapes)",
+        "Note the locations of other people — who is there and what are they doing?",
+        "Identify objects that could be used as barriers (tables, chairs, doors)",
+        "Check your phone signal strength",
+        "Mentally rehearse: 'If something happens, I will go to [exit] and [action]'"
+      ],
+      tips: ["Make this a habit — it takes only 10 seconds", "Sit facing the door in restaurants", "Choose well-lit, populated routes", "Park in visible, well-lit areas near exits"],
+      whenToUse: "Every time you enter a new space — restaurant, office, parking lot, event",
+      safetyNote: "This becomes second nature with practice and doesn't create anxiety — it creates confidence"
+    },
+    {
+      name: "Reading Body Language",
+      description: "How to identify threatening body language and pre-attack indicators before physical contact.",
+      difficulty: "Intermediate",
+      steps: [
+        "Watch for target glancing — someone repeatedly looking at you and then around (checking for witnesses)",
+        "Notice invasion of personal space — someone gradually moving closer than comfortable",
+        "Observe hands — clenched fists, hidden hands, or hands moving to weapons are red flags",
+        "Look for 'interview' behavior — asking questions to gauge your vulnerability (Are you alone? Where do you live?)",
+        "Trust your gut — if someone's behavior makes you uncomfortable, act on it"
+      ],
+      tips: ["Practice people-watching in safe public places", "Most attackers 'interview' before attacking — cut the interview short", "A firm, confident response often deters predators", "Predators look for easy targets — don't be one"],
+      whenToUse: "When you notice someone paying unusual attention to you",
+      safetyNote: "Acting on instinct is not overreacting — trust your inner alarm system"
+    }
+  ],
+  advanced_defense: [
+    {
+      name: "Defense from Ground Position",
+      description: "Techniques for defending yourself if you're knocked down or fall during a confrontation.",
+      difficulty: "Intermediate",
+      steps: [
+        "Keep your feet toward the attacker — use your legs as a barrier and weapon",
+        "Scoot on your back, keeping legs between you and the attacker",
+        "If they try to get on top, use your feet to push them away (kick to knees or midsection)",
+        "If they're over you, bridge and roll — lift hips explosively and turn to one side",
+        "Get back to feet as quickly as possible and RUN"
+      ],
+      tips: ["Your legs are your strongest weapons from the ground", "Never turn your back to an attacker while on the ground", "Make as much noise as possible", "Practice getting up quickly from the ground"],
+      whenToUse: "If you're knocked down or tripped during a confrontation",
+      safetyNote: "The goal is always to get back on your feet and escape — never stay on the ground"
+    },
+    {
+      name: "Multiple Attackers Strategy",
+      description: "Survival strategies when facing more than one threat — focus on escape, not fighting.",
+      difficulty: "Advanced",
+      steps: [
+        "Do NOT try to fight multiple people — escape is the ONLY goal",
+        "Keep all threats in your visual field — don't let anyone get behind you",
+        "Target the closest or weakest-positioned attacker with a decisive strike",
+        "Use the environment — tables, chairs, cars as barriers between you and attackers",
+        "Run toward people, lights, and public spaces — scream 'FIRE!' for maximum attention"
+      ],
+      tips: ["Compliance is a valid survival strategy if escape isn't possible", "Your phone/bag/money aren't worth your life — give them up if demanded", "Create maximum noise and chaos", "If you can run, run — don't look back"],
+      whenToUse: "When confronted by more than one person in a threatening situation",
+      safetyNote: "NO self-defense technique guarantees safety against multiple attackers — avoidance and awareness are critical"
+    },
+    {
+      name: "Improvised Defense Tools",
+      description: "How to use everyday objects around you as defensive tools in emergencies.",
+      difficulty: "Intermediate",
+      steps: [
+        "Keys: Hold between fingers for a jabbing strike to sensitive areas",
+        "Bag/Purse: Swing as a distraction or barrier, or throw at face to create escape time",
+        "Umbrella/Water bottle: Use as a striking tool targeting face, throat, or knees",
+        "Phone: Dial 112, use flashlight to blind, throw at face as last resort",
+        "Pen: Hold in fist and jab at sensitive areas (hands, face) if grabbed"
+      ],
+      tips: ["The best defense tool is the one you have with you", "Any distraction buys you seconds to escape", "Practice awareness of what's in your hands/bag", "A thrown object gives you 1-2 seconds — use them to run"],
+      whenToUse: "When you have no formal defense tools but need to create an escape opportunity",
+      safetyNote: "Improvised tools create distractions and small windows — use that window to ESCAPE, not to fight"
+    }
   ]
 }
 
@@ -421,6 +743,28 @@ export const mockLessons = {
         { id: 'filing_fir', title: 'Filing an FIR', scenarios: 3 },
         { id: 'court_procedures', title: 'Court Procedures', scenarios: 2 }
       ]
+    },
+    {
+      id: 'cyber_laws',
+      title: 'Cyber Laws & Digital Rights',
+      description: 'Navigate the digital world safely with knowledge of cyber laws that protect you',
+      difficulty: 'intermediate',
+      chapters: [
+        { id: 'cyber_harassment', title: 'Cyber Harassment & Stalking', scenarios: 2 },
+        { id: 'privacy_rights', title: 'Privacy Rights Online', scenarios: 2 },
+        { id: 'reporting_cybercrime', title: 'Reporting Cyber Crimes', scenarios: 2 }
+      ]
+    },
+    {
+      id: 'maintenance_alimony',
+      title: 'Maintenance & Financial Security',
+      description: 'Understand your rights to financial support and economic independence',
+      difficulty: 'advanced',
+      chapters: [
+        { id: 'maintenance_rights', title: 'Maintenance Rights', scenarios: 2 },
+        { id: 'streedhan', title: 'Streedhan & Dowry Laws', scenarios: 2 },
+        { id: 'financial_independence', title: 'Financial Independence', scenarios: 2 }
+      ]
     }
   ],
   voice_assertiveness: [
@@ -437,6 +781,20 @@ export const mockLessons = {
       description: 'Build confidence in speaking up in public settings',
       duration: '45 min',
       topics: ['Voice Projection', 'Body Language', 'Overcoming Anxiety', 'Handling Interruptions']
+    },
+    {
+      id: 'workplace_negotiation',
+      title: 'Workplace Negotiation',
+      description: 'Master the art of negotiating raises, credit, and fair treatment at work',
+      duration: '40 min',
+      topics: ['Salary Negotiation', 'Claiming Credit', 'Flexible Work', 'Workload Balance']
+    },
+    {
+      id: 'handling_conflict',
+      title: 'Handling Conflict & Manipulation',
+      description: 'Navigate conflicts, de-escalate arguments, and respond to gaslighting',
+      duration: '35 min',
+      topics: ['De-escalation', 'Passive-Aggression', 'Emotional Boundaries', 'Gaslighting Response']
     }
   ],
   self_defense: [
@@ -453,6 +811,20 @@ export const mockLessons = {
       description: 'Techniques for escaping grabs and dangerous situations',
       duration: '35 min',
       topics: ['Wrist Escape', 'Bear Hug Escape', 'Creating Safe Distance']
+    },
+    {
+      id: 'situational_awareness',
+      title: 'Situational Awareness',
+      description: 'Train your mind to stay alert, read body language, and spot danger before it strikes',
+      duration: '30 min',
+      topics: ['Color Code of Awareness', 'Environment Scanning', 'Reading Body Language']
+    },
+    {
+      id: 'advanced_defense',
+      title: 'Advanced Defense Strategies',
+      description: 'Ground defense, multiple attacker strategies, and using everyday objects',
+      duration: '45 min',
+      topics: ['Ground Position Defense', 'Multiple Attackers', 'Improvised Tools']
     }
   ]
 }
