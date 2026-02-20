@@ -75,13 +75,6 @@ const Emergency = () => {
     setEditingContact(null)
   }
 
-  // Group user contacts by category
-  const _groupedContacts = userContacts.reduce((groups, contact) => {
-    const cat = contact.category || 'personal'
-    if (!groups[cat]) groups[cat] = []
-    groups[cat].push(contact)
-    return groups
-  }, {})
 
   if (loading) {
     return (
