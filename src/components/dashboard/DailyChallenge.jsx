@@ -1,125 +1,104 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Target, CheckCircle, Zap } from 'lucide-react'
+import { Target, CheckCircle, Zap, Gift } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
+import { mockEntityOperations, updateUserStats, logActivity } from '../../lib/utils'
+import { mockChallenges } from '../../lib/mockData'
 
 const DailyChallenge = () => {
+  const [challenge, setChallenge] = useState(null)
   const [completed, setCompleted] = useState(false)
-  
-  // Get daily challenge based on current date
-  const challenges = [
-    {
-      title: "Practice Assertive Communication",
-      description: "Say 'no' to one request today while being respectful and clear about your boundaries.",
-      points: 15,
-      category: "Voice Training"
-    },
-    {
-      title: "Learn a Safety Technique",
-      description: "Review and practice one self-defense move from the basic techniques module.",
-      points: 20,
-      category: "Self Defense"
-    },
-    {
-      title: "Know Your Rights",
-      description: "Read about workplace harassment laws and share one fact with a friend.",
-      points: 10,
-      category: "Legal Knowledge"
-    },
-    {
-      title: "Emergency Preparedness",
-      description: "Update your emergency contacts and share them with a trusted person.",
-      points: 15,
-      category: "Safety"
-    },
-    {
-      title: "Confidence Building",
-      description: "Practice speaking clearly and confidently in front of a mirror for 5 minutes.",
-      points: 12,
-      category: "Voice Training"
-    }
-  ]
-  
-  const today = new Date()
-  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24)
-  const todayChallenge = challenges[dayOfYear % challenges.length]
 
-  const handleComplete = () => {
+  useEffect(() => {
+    const loadChallenge = async () => {
+      // Pick challenge based on day of year
+      const today = new Date()
+      const dayIndex = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24))
+      const todayChallenge = mockChallenges[dayIndex % mockChallenges.length]
+      setChallenge(todayChallenge)
+
+      // Check if already completed today
+      const todayStr = today.toISOString().split('T')[0]
+      const logs = await mockEntityOperations.list('DailyChallengeLog')
+      const alreadyDone = logs.find(l => l.date === todayStr)
+      if (alreadyDone) {
+        setCompleted(true)
+      }
+    }
+    loadChallenge()
+  }, [])
+
+  const handleComplete = async () => {
+    if (!challenge || completed) return
     setCompleted(true)
-    // In real app, this would update user stats and add points
+
+    const todayStr = new Date().toISOString().split('T')[0]
+
+    // Log the challenge
+    await mockEntityOperations.create('DailyChallengeLog', {
+      date: todayStr,
+      title: challenge.title,
+      points: challenge.points
+    })
+
+    // Update user stats
+    await updateUserStats(challenge.points)
+
+    // Log activity
+    await logActivity({
+      module_type: 'daily_challenge',
+      title: challenge.title,
+      type: 'challenge',
+      points: challenge.points,
+      status: 'completed'
+    })
   }
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case 'Voice Training': return 'bg-purple-100 text-purple-800'
-      case 'Self Defense': return 'bg-green-100 text-green-800'
-      case 'Legal Knowledge': return 'bg-blue-100 text-blue-800'
-      case 'Safety': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
+  if (!challenge) return null
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 0.5, duration: 0.5 }}
-    >
-      <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-orange-200">
-        <CardHeader>
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 0.5 }}>
+      <Card className={`${completed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'}`}>
+        <CardHeader className="pb-3">
           <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Target className="w-5 h-5 text-orange-600" />
+            <div className="flex items-center space-x-2 text-lg">
+              {completed ? (
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              ) : (
+                <Target className="w-5 h-5 text-amber-600" />
+              )}
               <span>Daily Challenge</span>
             </div>
-            <Badge 
-              className={`${getCategoryColor(todayChallenge.category)} border-0`}
-              variant="outline"
-            >
-              {todayChallenge.category}
+            <Badge className={`${completed ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`} variant="outline">
+              <Zap className="w-3 h-3 mr-1" />
+              {challenge.points} pts
             </Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">
-                {todayChallenge.title}
-              </h3>
-              <p className="text-gray-700 text-sm leading-relaxed">
-                {todayChallenge.description}
-              </p>
-            </div>
-            
-            <div className="flex items-center justify-between pt-2">
-              <div className="flex items-center space-x-2">
-                <Zap className="w-4 h-4 text-amber-600" />
-                <span className="text-sm font-medium text-amber-700">
-                  +{todayChallenge.points} points
-                </span>
-              </div>
-              
-              {!completed ? (
-                <Button 
-                  onClick={handleComplete}
-                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
-                >
-                  Complete Challenge
-                </Button>
-              ) : (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="flex items-center space-x-2 text-green-600"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="font-medium">Completed!</span>
-                </motion.div>
-              )}
-            </div>
+        <CardContent className="space-y-4">
+          <div>
+            <h4 className="font-medium text-gray-900 mb-1">{challenge.title}</h4>
+            <p className="text-sm text-gray-600">{challenge.description}</p>
           </div>
+
+          <div className="flex items-center space-x-2 text-xs text-gray-500">
+            <Gift className="w-3 h-3" />
+            <span>{challenge.category}</span>
+          </div>
+
+          {completed ? (
+            <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex items-center justify-center space-x-2 p-3 bg-green-100 rounded-lg border border-green-200">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <span className="text-green-700 font-medium">Challenge Completed! +{challenge.points} pts 🎉</span>
+            </motion.div>
+          ) : (
+            <Button onClick={handleComplete} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Mark as Completed
+            </Button>
+          )}
         </CardContent>
       </Card>
     </motion.div>
