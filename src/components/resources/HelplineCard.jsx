@@ -1,24 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { 
-  Phone, 
-  Clock, 
-  Heart,
-  AlertCircle,
-  ExternalLink
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Button } from '../ui/button'
-import { Badge } from '../ui/badge'
+import { Phone, Clock, Heart, AlertCircle } from 'lucide-react'
 
 const HelplineCard = ({ helpline, index = 0 }) => {
-  const getAvailabilityColor = (availability) => {
-    if (availability.includes('24/7')) {
-      return 'bg-green-100 text-green-800'
-    }
-    return 'bg-blue-100 text-blue-800'
-  }
-
   const handleCall = () => {
     if (typeof window !== 'undefined') {
       window.location.href = `tel:${helpline.number}`
@@ -26,93 +10,28 @@ const HelplineCard = ({ helpline, index = 0 }) => {
   }
 
   const isEmergency = helpline.number === '100' || helpline.number === '112'
+  const is247 = helpline.availability.includes('24/7')
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-    >
-      <Card className={`hover:shadow-lg transition-all duration-200 group ${
-        isEmergency ? 'border-red-200 bg-gradient-to-br from-red-50 to-rose-50' : ''
-      }`}>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-3">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                isEmergency 
-                  ? 'bg-gradient-to-r from-red-500 to-rose-600' 
-                  : 'bg-gradient-to-r from-orange-500 to-amber-500'
-              }`}>
-                {isEmergency ? (
-                  <AlertCircle className="w-6 h-6 text-white" />
-                ) : (
-                  <Heart className="w-6 h-6 text-white" />
-                )}
-              </div>
-              <div className="flex-1">
-                <CardTitle className={`text-lg group-hover:transition-colors ${
-                  isEmergency ? 'group-hover:text-red-600' : 'group-hover:text-orange-600'
-                }`}>
-                  {helpline.name}
-                </CardTitle>
-                <Badge 
-                  className={`mt-1 ${getAvailabilityColor(helpline.availability)}`}
-                  variant="outline"
-                >
-                  <Clock className="w-3 h-3 mr-1" />
-                  {helpline.availability}
-                </Badge>
-              </div>
-            </div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
+      <div className={`glass-card p-4 glass-hover group ${isEmergency ? 'border-red-500/20' : ''}`}>
+        <div className="flex items-center space-x-3 mb-2">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isEmergency ? 'bg-gradient-to-br from-red-500 to-rose-600' : 'bg-gradient-to-br from-amber-500 to-orange-500'}`}>
+            {isEmergency ? <AlertCircle className="w-5 h-5 text-white" /> : <Heart className="w-5 h-5 text-white" />}
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          <p className="text-gray-600 leading-relaxed">
-            {helpline.description}
-          </p>
-          
-          <div className="flex items-center justify-between pt-2">
-            <div className="text-lg font-bold text-gray-900">
-              {helpline.number}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="group-hover:border-orange-300"
-              >
-                <ExternalLink className="w-4 h-4 mr-1" />
-                More Info
-              </Button>
-              <Button
-                onClick={handleCall}
-                className={`${
-                  isEmergency 
-                    ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700' 
-                    : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600'
-                }`}
-                size="sm"
-              >
-                <Phone className="w-4 h-4 mr-1" />
-                Call Now
-              </Button>
-            </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="font-semibold text-white text-sm">{helpline.name}</h4>
+            <span className={`inline-flex items-center text-[10px] font-medium ${is247 ? 'text-emerald-400' : 'text-blue-400'}`}>
+              <Clock className="w-2.5 h-2.5 mr-0.5" />{helpline.availability}
+            </span>
           </div>
-          
-          {isEmergency && (
-            <div className="p-3 bg-red-100 rounded-lg border border-red-200">
-              <div className="flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 text-red-600" />
-                <span className="text-sm font-medium text-red-800">
-                  Emergency Number - Available 24/7
-                </span>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          <div className="text-lg font-display font-bold text-white">{helpline.number}</div>
+        </div>
+        <p className="text-xs text-slate-400 mb-3">{helpline.description}</p>
+        <button onClick={handleCall} className={`w-full text-xs font-semibold py-2 rounded-lg flex items-center justify-center space-x-1 transition-all hover:-translate-y-0.5 ${isEmergency ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white hover:shadow-lg hover:shadow-red-500/20' : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/20'}`}>
+          <Phone className="w-3 h-3" /><span>Call Now</span>
+        </button>
+      </div>
     </motion.div>
   )
 }

@@ -1,18 +1,8 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Download,
-  FileText,
-  BookOpen,
-  CheckSquare,
-  ExternalLink,
-  Star,
-  X,
-  CheckCircle
+  Download, FileText, BookOpen, CheckSquare, ExternalLink, Star, X, CheckCircle
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Button } from '../ui/button'
-import { Badge } from '../ui/badge'
 import { downloadResource, generateResourceContent } from '../../lib/utils'
 
 const ResourceCard = ({ resource, index = 0 }) => {
@@ -30,10 +20,10 @@ const ResourceCard = ({ resource, index = 0 }) => {
 
   const getTypeColor = (type) => {
     switch (type.toLowerCase()) {
-      case 'pdf guide': return 'bg-red-100 text-red-800'
-      case 'checklist': return 'bg-green-100 text-green-800'
-      case 'workbook': return 'bg-blue-100 text-blue-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'pdf guide': return 'text-red-400 bg-red-500/10 border-red-500/20'
+      case 'checklist': return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+      case 'workbook': return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+      default: return 'text-slate-400 bg-slate-500/10 border-slate-500/20'
     }
   }
 
@@ -45,89 +35,45 @@ const ResourceCard = ({ resource, index = 0 }) => {
     setTimeout(() => setDownloaded(false), 3000)
   }
 
-  const handlePreview = () => {
-    setShowPreview(true)
-  }
-
   const previewContent = showPreview ? generateResourceContent(resource.id) : ''
 
   return (
     <>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1, duration: 0.5 }}>
-        <Card className="hover:shadow-lg transition-all duration-200 group">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <CardTitle className="text-lg group-hover:text-orange-600 transition-colors">
-                    {resource.title}
-                  </CardTitle>
-                  <Badge className={`mt-1 ${getTypeColor(resource.type)}`} variant="outline">{resource.type}</Badge>
-                </div>
-              </div>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
-                ))}
-              </div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
+        <div className="glass-card p-5 glass-hover group">
+          <div className="flex items-start space-x-3 mb-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <Icon className="w-5 h-5 text-white" />
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-gray-600 leading-relaxed">{resource.description}</p>
-            <div className="flex items-center justify-between pt-2">
-              <div className="text-sm text-gray-500">Free download • High quality</div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" className="group-hover:border-orange-300" onClick={handlePreview}>
-                  <ExternalLink className="w-4 h-4 mr-1" /> Preview
-                </Button>
-                <Button onClick={handleDownload} className={`${downloaded ? 'bg-green-600 hover:bg-green-700' : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600'}`} size="sm">
-                  {downloaded ? <><CheckCircle className="w-4 h-4 mr-1" /> Downloaded!</> : <><Download className="w-4 h-4 mr-1" /> Download</>}
-                </Button>
-              </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-display font-bold text-white text-sm group-hover:text-amber-300 transition-colors">{resource.title}</h4>
+              <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${getTypeColor(resource.type)}`}>{resource.type}</span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed mb-4">{resource.description}</p>
+          <div className="flex items-center space-x-2">
+            <button onClick={() => setShowPreview(true)} className="flex-1 text-xs font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] py-2 rounded-lg hover:bg-white/[0.08] transition-all flex items-center justify-center space-x-1">
+              <ExternalLink className="w-3 h-3" /><span>Preview</span>
+            </button>
+            <button onClick={handleDownload} className={`flex-1 text-xs font-semibold py-2 rounded-lg flex items-center justify-center space-x-1 transition-all ${downloaded ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/20'}`}>
+              {downloaded ? <><CheckCircle className="w-3 h-3" /><span>Done!</span></> : <><Download className="w-3 h-3" /><span>Download</span></>}
+            </button>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Preview Modal */}
       <AnimatePresence>
         {showPreview && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-            onClick={() => setShowPreview(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between p-4 border-b">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowPreview(false)}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="glass-card max-w-3xl w-full max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
+                <div className="flex items-center space-x-2"><Icon className="w-5 h-5 text-amber-400" /><h3 className="font-display font-bold text-white">{resource.title}</h3></div>
                 <div className="flex items-center space-x-2">
-                  <Icon className="w-5 h-5 text-orange-600" />
-                  <h3 className="font-bold text-gray-900">{resource.title}</h3>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button onClick={handleDownload} size="sm" className="bg-gradient-to-r from-orange-500 to-amber-500">
-                    <Download className="w-4 h-4 mr-1" /> Download
-                  </Button>
-                  <Button variant="outline" size="icon" onClick={() => setShowPreview(false)}>
-                    <X className="w-4 h-4" />
-                  </Button>
+                  <button onClick={handleDownload} className="text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 rounded-lg"><Download className="w-3 h-3 mr-1 inline" />Download</button>
+                  <button onClick={() => setShowPreview(false)} className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-400"><X className="w-4 h-4" /></button>
                 </div>
               </div>
-              <div className="p-6 overflow-y-auto max-h-[65vh]">
-                <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 leading-relaxed">
-                  {previewContent}
-                </pre>
-              </div>
+              <div className="p-6 overflow-y-auto max-h-[65vh]"><pre className="whitespace-pre-wrap font-mono text-sm text-slate-300 leading-relaxed">{previewContent}</pre></div>
             </motion.div>
           </motion.div>
         )}

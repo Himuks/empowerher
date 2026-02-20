@@ -1,109 +1,66 @@
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Star,
-  Award,
-  Crown,
-  Shield,
-  Zap,
-  Target,
-  Lock,
-  Medal
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Badge } from '../ui/badge'
-import { mockEntityOperations } from '../../lib/utils'
+import { motion } from 'framer-motion'
+import { Award, Lock, Star, Zap, Shield, Target, Crown } from 'lucide-react'
 import { mockBadges } from '../../lib/mockData'
+import { mockEntityOperations } from '../../lib/utils'
+
+const iconMap = { star: Star, zap: Zap, crown: Crown, award: Award, shield: Shield, target: Target }
+const rarityConfig = {
+  common: { label: 'Common', border: 'border-slate-600/30', bg: 'bg-slate-700/30', text: 'text-slate-300', glow: '' },
+  uncommon: { label: 'Uncommon', border: 'border-blue-500/30', bg: 'bg-blue-500/10', text: 'text-blue-400', glow: 'glow-blue' },
+  rare: { label: 'Rare', border: 'border-purple-500/30', bg: 'bg-purple-500/10', text: 'text-purple-400', glow: 'glow-purple' },
+  legendary: { label: 'Legendary', border: 'border-amber-500/30', bg: 'bg-amber-500/10', text: 'text-amber-400', glow: 'glow-amber' },
+}
 
 const AchievementBadges = () => {
   const [earnedBadges, setEarnedBadges] = useState([])
 
   useEffect(() => {
-    const loadBadges = async () => {
-      const statsList = await mockEntityOperations.list('UserStats')
-      const stats = statsList[0]
-      if (stats?.badges_earned) {
-        setEarnedBadges(stats.badges_earned)
-      }
+    const load = async () => {
+      const stats = await mockEntityOperations.list('UserStats')
+      if (stats[0]?.badges_earned) setEarnedBadges(stats[0].badges_earned)
     }
-    loadBadges()
+    load()
   }, [])
 
-  const iconMap = {
-    star: Star,
-    award: Award,
-    crown: Crown,
-    shield: Shield,
-    zap: Zap,
-    target: Target
-  }
-
-  const rarityColors = {
-    common: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', gradient: 'from-gray-400 to-slate-500', shadow: 'shadow-gray-200/50' },
-    uncommon: { bg: 'bg-blue-50/50', text: 'text-blue-700', border: 'border-blue-200', gradient: 'from-blue-400 to-cyan-500', shadow: 'shadow-blue-300/50' },
-    rare: { bg: 'bg-purple-50/50', text: 'text-purple-700', border: 'border-purple-200', gradient: 'from-purple-400 to-indigo-500', shadow: 'shadow-purple-300/50' },
-    legendary: { bg: 'bg-amber-50/50', text: 'text-amber-800', border: 'border-amber-200', gradient: 'from-amber-400 to-orange-500', shadow: 'shadow-amber-300/50' }
-  }
-
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="h-full">
-      <Card className="h-full bg-white/70 backdrop-blur-lg border-gray-200/50 shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none"></div>
-        <CardHeader className="border-b border-gray-100/50 bg-white/40 pb-4">
-          <CardTitle className="flex items-center space-x-2">
-            <Medal className="w-5 h-5 text-amber-500" />
-            <span className="font-bold text-gray-900">Achievement Badges</span>
-            <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white ml-auto border-0 shadow-sm shadow-amber-500/20" variant="outline">
-              {earnedBadges.length}/{mockBadges.length}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-5">
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <AnimatePresence>
-              {mockBadges.map((badge, index) => {
-                const isUnlocked = earnedBadges.includes(badge.id)
-                const Icon = iconMap[badge.icon] || Star
-                const colors = rarityColors[badge.rarity] || rarityColors.common
-
-                return (
-                  <motion.div
-                    key={badge.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={isUnlocked ? { y: -4, scale: 1.02 } : {}}
-                    className={`relative p-4 rounded-2xl border flex flex-col items-center justify-between text-center transition-all duration-300 group ${isUnlocked
-                      ? `${colors.bg} ${colors.border} hover:shadow-lg ${colors.shadow} cursor-pointer`
-                      : 'bg-gray-50/50 border-dashed border-gray-200 opacity-60 grayscale-[50%]'
-                      }`}
-                  >
-                    <div className={`w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3 transition-transform duration-300 ${isUnlocked ? `bg-gradient-to-br ${colors.gradient} shadow-md group-hover:scale-110 group-hover:rotate-3` : 'bg-gray-200'
-                      }`}>
-                      {isUnlocked ? (
-                        <Icon className="w-6 h-6 text-white" />
-                      ) : (
-                        <Lock className="w-5 h-5 text-gray-400" />
-                      )}
-                    </div>
-                    <div className={`text-sm font-bold leading-tight mb-1 ${isUnlocked ? colors.text : 'text-gray-500'}`}>
-                      {badge.name}
-                    </div>
-                    <div className="text-xs font-medium text-gray-500 leading-snug mb-3">
-                      {badge.description}
-                    </div>
-                    <div className="mt-auto">
-                      <Badge className={`text-[10px] uppercase tracking-wider font-bold ${isUnlocked ? `bg-white/60 ${colors.text} border-${colors.text.split('-')[1]}-200` : 'bg-gray-100 text-gray-400 border-gray-200'}`} variant="outline">
-                        {badge.rarity}
-                      </Badge>
-                    </div>
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+      <div className="glass-card p-5">
+        <div className="flex items-center space-x-2 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+            <Award className="w-4 h-4 text-white" />
           </div>
-        </CardContent>
-      </Card>
+          <h3 className="font-display font-bold text-white text-sm">Achievements</h3>
+          <span className="text-xs text-slate-400 ml-auto">{earnedBadges.length}/{mockBadges.length}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {mockBadges.slice(0, 6).map((badge) => {
+            const earned = earnedBadges.includes(badge.id)
+            const rarity = rarityConfig[badge.rarity] || rarityConfig.common
+            const Icon = iconMap[badge.icon] || Star
+            return (
+              <div
+                key={badge.id}
+                className={`p-3 rounded-xl border transition-all duration-300 ${earned
+                    ? `${rarity.border} ${rarity.bg} ${rarity.glow}`
+                    : 'border-slate-800/50 bg-slate-800/20 opacity-40'
+                  }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${earned ? rarity.bg : 'bg-slate-800/50'
+                    }`}>
+                    {earned ? <Icon className={`w-3.5 h-3.5 ${rarity.text}`} /> : <Lock className="w-3 h-3 text-slate-600" />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className={`text-xs font-semibold truncate ${earned ? 'text-white' : 'text-slate-500'}`}>{badge.name}</div>
+                    <div className={`text-[10px] ${earned ? rarity.text : 'text-slate-600'}`}>{rarity.label}</div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </motion.div>
   )
 }

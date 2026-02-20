@@ -2,18 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  ArrowLeft,
-  MessageCircle,
-  Play,
-  Clock,
-  Star,
-  CheckCircle,
-  Mic,
-  Volume2
+  ArrowLeft, MessageCircle, Play, Clock, Star, CheckCircle, Mic, Volume2
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Button } from '../components/ui/button'
-import { Progress } from '../components/ui/progress'
 import { Badge } from '../components/ui/badge'
 import VoiceExercise from '../components/voice/VoiceExercise'
 import ConfidenceTracker from '../components/voice/ConfidenceTracker'
@@ -30,14 +20,10 @@ const VoiceTraining = () => {
   const loadProgress = useCallback(async () => {
     const baseLessons = mockLessons.voice_assertiveness || []
     const trainingProgress = await mockEntityOperations.list('TrainingProgress')
-
     const enriched = baseLessons.map(lesson => {
-      const saved = trainingProgress.find(
-        p => p.module_type === 'voice_assertiveness' && p.lesson_id === lesson.id
-      )
+      const saved = trainingProgress.find(p => p.module_type === 'voice_assertiveness' && p.lesson_id === lesson.id)
       return { ...lesson, progress: saved?.completion_percentage || 0 }
     })
-
     setLessons(enriched)
     if (enriched.length > 0) {
       const totalProgress = enriched.reduce((sum, l) => sum + (l.progress || 0), 0)
@@ -49,189 +35,134 @@ const VoiceTraining = () => {
 
   useEffect(() => { loadProgress() }, [loadProgress])
 
-  const handleStartLesson = (lesson) => {
-    setSelectedLesson(lesson)
-    setShowExercise(true)
-  }
-
-  const handleExerciseComplete = () => {
-    setShowExercise(false)
-    setSelectedLesson(null)
-    loadProgress()
-  }
-
-  const handleBackToLessons = () => {
-    setShowExercise(false)
-    setSelectedLesson(null)
-    loadProgress()
-  }
+  const handleStartLesson = (lesson) => { setSelectedLesson(lesson); setShowExercise(true) }
+  const handleExerciseComplete = () => { setShowExercise(false); setSelectedLesson(null); loadProgress() }
+  const handleBackToLessons = () => { setShowExercise(false); setSelectedLesson(null); loadProgress() }
 
   if (showExercise && selectedLesson) {
-    return (
-      <VoiceExercise
-        lessonId={selectedLesson.id}
-        lessonTitle={selectedLesson.title}
-        onComplete={handleExerciseComplete}
-        onBack={handleBackToLessons}
-      />
-    )
+    return <VoiceExercise lessonId={selectedLesson.id} lessonTitle={selectedLesson.title} onComplete={handleExerciseComplete} onBack={handleBackToLessons} />
   }
+
+  const circumference = 2 * Math.PI * 42
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center space-x-4">
-        <Link to="/"><Button variant="outline" size="icon"><ArrowLeft className="w-4 h-4" /></Button></Link>
+        <Link to="/"><button className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 transition-colors"><ArrowLeft className="w-4 h-4" /></button></Link>
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
             <MessageCircle className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Voice Assertiveness Training</h1>
-            <p className="text-gray-600">Build confidence in speaking up and setting boundaries</p>
+            <h1 className="text-3xl font-display font-bold text-white">Voice Assertiveness</h1>
+            <p className="text-slate-400">Build confidence in speaking up and setting boundaries</p>
           </div>
         </div>
       </motion.div>
 
-      {/* Progress Overview */}
+      {/* Progress */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <Card className="bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">{moduleProgress}%</div>
-                <div className="text-sm text-gray-600">Module Progress</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600 mb-2">
-                  {lessons.filter(l => l.progress === 100).length}
-                </div>
-                <div className="text-sm text-gray-600">Lessons Completed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-amber-600 mb-2">{modulePoints}</div>
-                <div className="text-sm text-gray-600">Points Earned</div>
+        <div className="glass-card p-6">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="relative w-28 h-28 flex-shrink-0">
+              <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(148,163,184,0.1)" strokeWidth="6" />
+                <motion.circle cx="50" cy="50" r="42" fill="none" stroke="url(#voiceGrad)" strokeWidth="6" strokeLinecap="round" strokeDasharray={circumference} initial={{ strokeDashoffset: circumference }} animate={{ strokeDashoffset: circumference * (1 - moduleProgress / 100) }} transition={{ duration: 1.5, ease: "easeOut" }} />
+                <defs><linearGradient id="voiceGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#8b5cf6" /><stop offset="100%" stopColor="#a855f7" /></linearGradient></defs>
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="text-2xl font-display font-bold text-white">{moduleProgress}%</div>
               </div>
             </div>
-            <div className="mt-6">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-600">Overall Progress</span>
-                <span className="text-purple-600 font-medium">{moduleProgress}%</span>
-              </div>
-              <Progress value={moduleProgress} className="h-3" />
+            <div className="flex-1 grid grid-cols-3 gap-4 text-center w-full">
+              <div><div className="text-2xl font-display font-bold text-violet-400">{moduleProgress}%</div><div className="text-xs text-slate-400">Progress</div></div>
+              <div><div className="text-2xl font-display font-bold text-emerald-400">{lessons.filter(l => l.progress === 100).length}</div><div className="text-xs text-slate-400">Completed</div></div>
+              <div><div className="text-2xl font-display font-bold text-amber-400">{modulePoints}</div><div className="text-xs text-slate-400">Points</div></div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Daily Voice Practice and Confidence Tracker */}
+      {/* Daily Voice Practice & Confidence */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <VoiceExercise standalone={true} />
         <ConfidenceTracker />
       </div>
 
-      {/* Lessons Grid */}
+      {/* Lessons */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Volume2 className="w-5 h-5 text-purple-600" />
-              <span>Voice Training Lessons</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {lessons.map((lesson, index) => (
-                <motion.div key={lesson.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + index * 0.1 }}>
-                  <Card className="hover:shadow-lg transition-all duration-200">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="flex items-center space-x-2 mb-2">
-                            {lesson.progress === 100 ? (
-                              <CheckCircle className="w-5 h-5 text-green-600" />
-                            ) : lesson.progress > 0 ? (
-                              <Play className="w-5 h-5 text-purple-600" />
-                            ) : (
-                              <Mic className="w-5 h-5 text-gray-400" />
-                            )}
-                            <span>{lesson.title}</span>
-                          </CardTitle>
-                          <p className="text-sm text-gray-600 leading-relaxed">{lesson.description}</p>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <div className="flex items-center space-x-1"><Clock className="w-4 h-4" /><span>{lesson.duration}</span></div>
-                        <div className="flex items-center space-x-1"><Star className="w-4 h-4" /><span>{lesson.topics?.length || 0} topics</span></div>
-                      </div>
-                      {lesson.topics && (
-                        <div className="space-y-2">
-                          <div className="text-sm font-medium text-gray-700">Topics covered:</div>
-                          <div className="flex flex-wrap gap-2">
-                            {lesson.topics.map((topic, topicIndex) => (
-                              <Badge key={topicIndex} className="bg-purple-100 text-purple-800 text-xs" variant="outline">{topic}</Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Progress</span>
-                          <span className="text-purple-600 font-medium">{lesson.progress || 0}%</span>
-                        </div>
-                        <Progress value={lesson.progress || 0} className="h-2" />
-                      </div>
-                      <div className="pt-2">
-                        <Button
-                          className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-                          onClick={() => handleStartLesson(lesson)}
-                        >
-                          {lesson.progress === 100 ? (<><Star className="w-4 h-4 mr-2" />Review Lesson</>) :
-                            lesson.progress > 0 ? (<><Play className="w-4 h-4 mr-2" />Continue Lesson</>) :
-                              (<><Play className="w-4 h-4 mr-2" />Start Lesson</>)}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+        <div className="glass-card p-5">
+          <div className="flex items-center space-x-2 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+              <Volume2 className="w-4 h-4 text-white" />
             </div>
-          </CardContent>
-        </Card>
+            <h3 className="font-display font-bold text-white">Voice Training Lessons</h3>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {lessons.map((lesson, index) => (
+              <motion.div key={lesson.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + index * 0.1 }}>
+                <div className="glass-card p-5 glass-hover">
+                  <div className="flex items-center space-x-2 mb-2">
+                    {lesson.progress === 100 ? <CheckCircle className="w-5 h-5 text-emerald-400" /> : lesson.progress > 0 ? <Play className="w-5 h-5 text-violet-400" /> : <Mic className="w-5 h-5 text-slate-500" />}
+                    <h4 className="font-display font-bold text-white">{lesson.title}</h4>
+                  </div>
+                  <p className="text-sm text-slate-400 mb-3">{lesson.description}</p>
+                  <div className="flex items-center space-x-4 text-xs text-slate-500 mb-3">
+                    <span className="flex items-center space-x-1"><Clock className="w-3 h-3" /><span>{lesson.duration}</span></span>
+                    <span className="flex items-center space-x-1"><Star className="w-3 h-3" /><span>{lesson.topics?.length || 0} topics</span></span>
+                  </div>
+                  {lesson.topics && (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {lesson.topics.map((topic, i) => (
+                        <Badge key={i} className="bg-violet-500/10 text-violet-400 border-violet-500/20 text-[10px]">{topic}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mb-3">
+                    <div className="flex justify-between text-xs mb-1"><span className="text-slate-400">Progress</span><span className="text-violet-400 font-medium">{lesson.progress || 0}%</span></div>
+                    <div className="w-full h-1.5 bg-slate-800/50 rounded-full overflow-hidden">
+                      <motion.div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500" initial={{ width: 0 }} animate={{ width: `${lesson.progress || 0}%` }} transition={{ duration: 1 }} />
+                    </div>
+                  </div>
+                  <button onClick={() => handleStartLesson(lesson)} className="w-full py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-lg hover:shadow-violet-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                    {lesson.progress === 100 ? <><Star className="w-4 h-4 mr-2 inline" />Review</> : lesson.progress > 0 ? <><Play className="w-4 h-4 mr-2 inline" />Continue</> : <><Play className="w-4 h-4 mr-2 inline" />Start Lesson</>}
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </motion.div>
 
-      {/* Tips Section */}
+      {/* Tips */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-        <Card className="bg-gradient-to-r from-violet-50 to-purple-50 border-violet-200">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <MessageCircle className="w-5 h-5 text-violet-600" />
-              <span>Voice Training Tips</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <h4 className="font-medium text-gray-900">Building Confidence</h4>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start space-x-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" /><span>Practice in front of a mirror to build comfort</span></li>
-                  <li className="flex items-start space-x-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" /><span>Start with low-stakes situations</span></li>
-                  <li className="flex items-start space-x-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" /><span>Focus on your breathing and posture</span></li>
-                </ul>
-              </div>
-              <div className="space-y-3">
-                <h4 className="font-medium text-gray-900">Effective Communication</h4>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start space-x-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" /><span>Use "I" statements to express your needs</span></li>
-                  <li className="flex items-start space-x-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" /><span>Maintain steady eye contact</span></li>
-                  <li className="flex items-start space-x-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" /><span>Speak slowly and clearly</span></li>
-                </ul>
+        <div className="glass-card p-5">
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <MessageCircle className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="font-display font-bold text-white">Voice Training Tips</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-2">Building Confidence</h4>
+              <div className="space-y-2">
+                {['Practice in front of a mirror', 'Start with low-stakes situations', 'Focus on breathing and posture'].map((tip, i) => (
+                  <div key={i} className="flex items-start space-x-2 text-sm"><CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" /><span className="text-slate-300">{tip}</span></div>
+                ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <h4 className="text-sm font-semibold text-white mb-2">Effective Communication</h4>
+              <div className="space-y-2">
+                {['Use "I" statements', 'Maintain steady eye contact', 'Speak slowly and clearly'].map((tip, i) => (
+                  <div key={i} className="flex items-start space-x-2 text-sm"><CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" /><span className="text-slate-300">{tip}</span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </motion.div>
     </div>
   )

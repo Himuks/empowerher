@@ -1,66 +1,57 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Star, Trophy, Sparkles } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Progress } from '../ui/progress'
+import { Star, Sparkles } from 'lucide-react'
 
 const LevelProgress = ({ level, currentXP, nextLevelXP }) => {
-  const progressPercentage = (currentXP / nextLevelXP) * 100
+  const percentage = Math.round((currentXP / nextLevelXP) * 100)
+  const circumference = 2 * Math.PI * 42
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4, duration: 0.5 }}
-      whileHover={{ y: -4 }}
-      className="h-full"
-    >
-      <Card className="h-full bg-white/70 backdrop-blur-lg border-purple-200/50 shadow-lg relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-400/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-500"></div>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center justify-between text-lg">
-            <div className="flex items-center space-x-2">
-              <Trophy className="w-5 h-5 text-purple-600" />
-              <span className="font-bold text-gray-900">Level Progress</span>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+      <div className="glass-card p-5 h-full relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-28 h-28 bg-gradient-to-br from-violet-500/15 to-purple-500/10 rounded-full blur-2xl" />
+        <div className="relative z-10">
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+              <Star className="w-4 h-4 text-white" />
             </div>
-            <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="relative z-10 flex flex-col justify-between h-[calc(100%-4rem)]">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg transform group-hover:rotate-6 transition-all duration-300">
-                <span className="text-white font-black text-2xl">{level}</span>
-              </div>
-              <div>
-                <div className="font-bold text-gray-900 tracking-tight text-lg">Level {level}</div>
-                <div className="text-xs font-medium text-purple-600 uppercase tracking-wider">Empowerment Journey</div>
+            <h3 className="font-display font-bold text-white text-sm">Level Progress</h3>
+          </div>
+
+          <div className="flex items-center justify-center mb-3">
+            <div className="relative w-28 h-28">
+              <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(148,163,184,0.1)" strokeWidth="6" />
+                <motion.circle
+                  cx="50" cy="50" r="42" fill="none"
+                  stroke="url(#levelGradient)" strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  initial={{ strokeDashoffset: circumference }}
+                  animate={{ strokeDashoffset: circumference * (1 - percentage / 100) }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                />
+                <defs>
+                  <linearGradient id="levelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#8b5cf6" />
+                    <stop offset="100%" stopColor="#06b6d4" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <Sparkles className="w-4 h-4 text-amber-400 mb-0.5" />
+                <div className="text-2xl font-display font-extrabold text-white">{level}</div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-3 mt-auto">
-            <div className="flex justify-between items-end text-sm">
-              <span className="text-gray-500 font-medium">Progress</span>
-              <div className="text-right">
-                <span className="text-purple-600 font-bold text-lg">{currentXP}</span>
-                <span className="text-gray-400 text-xs font-semibold ml-1">/ {nextLevelXP} XP</span>
-              </div>
+          <div className="text-center">
+            <div className="text-xs text-slate-400">
+              <span className="text-violet-400 font-bold">{currentXP}</span> / {nextLevelXP} XP
             </div>
-            <Progress value={progressPercentage} className="h-2.5 bg-purple-100" />
           </div>
-
-          <div className="mt-5 flex items-center justify-center space-x-1.5 p-3 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 rounded-xl border border-purple-100/50">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`w-5 h-5 transition-all duration-300 ${i < level ? 'text-amber-400 fill-amber-400 drop-shadow-sm' : 'text-gray-200'
-                  }`}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   )
 }

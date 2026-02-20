@@ -1,118 +1,78 @@
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, Scale, MessageCircle, Shield, Trophy, Zap, Target, BookOpen } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Badge } from '../ui/badge'
-import { mockEntityOperations, getRelativeTime } from '../../lib/utils'
+import { motion } from 'framer-motion'
+import { Clock, CheckCircle, Zap, BookOpen } from 'lucide-react'
+import { mockEntityOperations } from '../../lib/utils'
+
+const typeConfig = {
+  lesson: { icon: BookOpen, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+  challenge: { icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+  quiz: { icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+}
 
 const RecentActivity = () => {
   const [activities, setActivities] = useState([])
 
   useEffect(() => {
-    const loadActivities = async () => {
-      const logs = await mockEntityOperations.list('ActivityLog')
-      // Sort by most recent first, limit to 6
-      const sorted = logs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6)
-      setActivities(sorted)
+    const load = async () => {
+      const data = await mockEntityOperations.list('ActivityLog')
+      setActivities(data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5))
     }
-    loadActivities()
+    load()
   }, [])
 
-  const getModuleIcon = (moduleType) => {
-    switch (moduleType) {
-      case 'legal_rights': return Scale
-      case 'voice_assertiveness': return MessageCircle
-      case 'self_defense': return Shield
-      case 'daily_challenge': return Target
-      default: return BookOpen
-    }
-  }
-
-  const getModuleColor = (moduleType) => {
-    switch (moduleType) {
-      case 'legal_rights': return { bg: 'bg-blue-50/50', border: 'border-blue-100', text: 'text-blue-600', gradient: 'from-blue-500 to-cyan-500' }
-      case 'voice_assertiveness': return { bg: 'bg-purple-50/50', border: 'border-purple-100', text: 'text-purple-600', gradient: 'from-purple-500 to-indigo-500' }
-      case 'self_defense': return { bg: 'bg-green-50/50', border: 'border-green-100', text: 'text-green-600', gradient: 'from-emerald-500 to-teal-500' }
-      case 'daily_challenge': return { bg: 'bg-amber-50/50', border: 'border-amber-100', text: 'text-amber-600', gradient: 'from-orange-500 to-amber-500' }
-      default: return { bg: 'bg-gray-50/50', border: 'border-gray-100', text: 'text-gray-600', gradient: 'from-gray-500 to-slate-500' }
-    }
-  }
-
-  const formatModuleName = (moduleType) => {
-    switch (moduleType) {
-      case 'legal_rights': return 'Legal Rights'
-      case 'voice_assertiveness': return 'Voice Training'
-      case 'self_defense': return 'Self Defense'
-      case 'daily_challenge': return 'Daily Challenge'
-      default: return 'Activity'
-    }
+  const timeAgo = (timestamp) => {
+    const diff = Date.now() - new Date(timestamp).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 60) return `${mins}m ago`
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 24) return `${hrs}h ago`
+    return `${Math.floor(hrs / 24)}d ago`
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="h-full">
-      <Card className="h-full bg-white/70 backdrop-blur-lg border-gray-200/50 shadow-lg relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-pink-400/5 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-700"></div>
-        <CardHeader className="border-b border-gray-100/50 bg-white/40 pb-4">
-          <CardTitle className="flex items-center space-x-2">
-            <Clock className="w-5 h-5 text-gray-700" />
-            <span className="font-bold text-gray-900">Recent Activity</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {activities.length > 0 ? (
-            <div className="divide-y divide-gray-100/50">
-              <AnimatePresence>
-                {activities.map((activity, index) => {
-                  const Icon = getModuleIcon(activity.module_type)
-                  const colors = getModuleColor(activity.module_type)
-                  return (
-                    <motion.div
-                      key={activity.id || index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                      className={`flex items-center justify-between p-4 ${colors.bg} hover:bg-white transition-all duration-300 group/item cursor-default border-l-4 border-transparent hover:${colors.border.replace('border-', 'border-l-')} hover:shadow-sm`}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${colors.gradient} flex items-center justify-center shadow-sm transform group-hover/item:scale-110 group-hover/item:rotate-3 transition-all duration-300`}>
-                          <Icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-gray-900 text-sm group-hover/item:text-gray-900 transition-colors">{activity.title}</div>
-                          <div className="text-xs text-gray-500 font-medium mt-0.5 flex flex-col sm:flex-row sm:items-center sm:space-x-2">
-                            <span className={colors.text}>{formatModuleName(activity.module_type)}</span>
-                            <span className="hidden sm:inline text-gray-300">•</span>
-                            <span>{getRelativeTime(activity.createdAt)}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end space-y-2">
-                        {activity.points > 0 && (
-                          <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 shadow-sm px-2 py-0.5 text-xs font-bold">
-                            <Zap className="w-3 h-3 mr-1 fill-current" />+{activity.points}
-                          </Badge>
-                        )}
-                        <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center">
-                          <Trophy className="w-3 h-3 mr-1 text-gray-300" />
-                          {activity.status || 'completed'}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )
-                })}
-              </AnimatePresence>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+      <div className="glass-card p-5">
+        <div className="flex items-center space-x-2 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+            <Clock className="w-4 h-4 text-white" />
+          </div>
+          <h3 className="font-display font-bold text-white text-sm">Recent Activity</h3>
+        </div>
+
+        {activities.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mx-auto mb-3">
+              <Clock className="w-5 h-5 text-slate-500" />
             </div>
-          ) : (
-            <div className="text-center py-12 px-4">
-              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                <Clock className="w-8 h-8 text-gray-300" />
-              </div>
-              <h4 className="text-gray-900 font-medium mb-1">No Activity Yet</h4>
-              <p className="text-gray-500 text-sm max-w-[200px] mx-auto">Start exploring modules and completing challenges to build your history!</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-sm text-slate-400">No activity yet. Start a lesson!</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {activities.map((activity, i) => {
+              const config = typeConfig[activity.type] || typeConfig.lesson
+              const Icon = config.icon
+              return (
+                <motion.div
+                  key={activity.id || i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + i * 0.05 }}
+                  className={`flex items-center space-x-3 p-3 rounded-xl border ${config.border} ${config.bg}`}
+                >
+                  <div className={`w-8 h-8 rounded-lg ${config.bg} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className={`w-4 h-4 ${config.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-white truncate">{activity.title}</div>
+                    <div className="text-[11px] text-slate-400">+{activity.points} pts</div>
+                  </div>
+                  <span className="text-[11px] text-slate-500 flex-shrink-0">{timeAgo(activity.timestamp)}</span>
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </motion.div>
   )
 }

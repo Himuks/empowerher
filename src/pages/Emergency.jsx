@@ -1,207 +1,209 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
-  ArrowLeft,
-  Phone,
-  Plus,
-  Shield,
-  AlertCircle,
-  Heart,
-  AlertTriangle,
-  CheckCircle
+  ArrowLeft, Phone, Plus, Shield, AlertCircle, Heart, AlertTriangle,
+  CheckCircle, X, User, Trash2, Edit3
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
-import EmergencyContactCard from '../components/emergency/EmergencyContactCard'
-import AddContactForm from '../components/emergency/AddContactForm'
 import { mockEntityOperations } from '../lib/utils'
 
+const defaultContacts = [
+  { id: 'police', name: 'Police', number: '100', icon: 'shield', gradient: 'from-blue-500 to-cyan-500', desc: 'Emergency police services' },
+  { id: 'women', name: "Women's Helpline", number: '181', icon: 'heart', gradient: 'from-rose-500 to-pink-500', desc: '24/7 confidential support' },
+  { id: 'emergency', name: 'Emergency', number: '112', icon: 'alert', gradient: 'from-red-500 to-rose-600', desc: 'Unified emergency number' },
+  { id: 'dv', name: 'DV Helpline', number: '1091', icon: 'shield', gradient: 'from-purple-500 to-violet-600', desc: 'Domestic violence support' },
+  { id: 'cyber', name: 'Cyber Crime', number: '1930', icon: 'alert', gradient: 'from-amber-500 to-orange-500', desc: 'Online harassment & fraud' },
+  { id: 'child', name: 'Child Helpline', number: '1098', icon: 'heart', gradient: 'from-emerald-500 to-green-500', desc: 'Child abuse & neglect' },
+]
+
 const Emergency = () => {
-  const [userContacts, setUserContacts] = useState([])
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [editingContact, setEditingContact] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [personalContacts, setPersonalContacts] = useState([])
+  const [showAdd, setShowAdd] = useState(false)
+  const [editId, setEditId] = useState(null)
+  const [form, setForm] = useState({ name: '', number: '', relationship: '' })
 
-  const defaultEmergencyNumbers = [
-    { id: 'default_police', name: 'Police Emergency', phone_number: '100', category: 'police', description: 'For immediate police assistance in emergencies', availability: '24/7' },
-    { id: 'default_helpline', name: "Women's Helpline", phone_number: '181', category: 'helpline', description: 'Counseling and support for women in distress', availability: '24/7' },
-    { id: 'default_medical', name: 'Emergency Services', phone_number: '112', category: 'medical', description: 'Unified emergency number for police, fire, and ambulance', availability: '24/7' },
-    { id: 'default_dv', name: 'Domestic Violence', phone_number: '1091', category: 'helpline', description: 'Domestic violence reporting and support', availability: '24/7' },
-    { id: 'default_legal', name: 'Legal Aid (NALSA)', phone_number: '15100', category: 'legal_aid', description: 'Free legal advice and advocate assignment', availability: 'Mon-Fri 9AM-6PM' }
-  ]
-
-  const loadContacts = useCallback(async () => {
-    try {
+  useEffect(() => {
+    const load = async () => {
       const contacts = await mockEntityOperations.list('EmergencyContact')
-      setUserContacts(contacts)
-    } catch (error) {
-      console.error('Error loading contacts:', error)
-    } finally {
-      setLoading(false)
+      setPersonalContacts(contacts)
     }
+    load()
   }, [])
 
-  useEffect(() => { loadContacts() }, [loadContacts])
-
-  const handleAddContact = async (contactData) => {
-    if (editingContact) {
-      // Update existing contact
-      await mockEntityOperations.update('EmergencyContact', editingContact.id, contactData)
-      setEditingContact(null)
+  const handleSubmit = async () => {
+    if (!form.name || !form.number) return
+    if (editId) {
+      await mockEntityOperations.update('EmergencyContact', editId, form)
     } else {
-      // Create new contact
-      await mockEntityOperations.create('EmergencyContact', contactData)
+      await mockEntityOperations.create('EmergencyContact', form)
     }
-    setShowAddForm(false)
-    loadContacts()
+    const contacts = await mockEntityOperations.list('EmergencyContact')
+    setPersonalContacts(contacts)
+    setShowAdd(false)
+    setEditId(null)
+    setForm({ name: '', number: '', relationship: '' })
   }
 
-  const handleEditContact = (contact) => {
-    setEditingContact(contact)
-    setShowAddForm(true)
+  const handleDelete = async (id) => {
+    await mockEntityOperations.delete('EmergencyContact', id)
+    const contacts = await mockEntityOperations.list('EmergencyContact')
+    setPersonalContacts(contacts)
   }
 
-  const handleDeleteContact = async (contactId) => {
-    if (window.confirm('Are you sure you want to delete this emergency contact?')) {
-      await mockEntityOperations.delete('EmergencyContact', contactId)
-      loadContacts()
-    }
+  const handleEdit = (contact) => {
+    setForm({ name: contact.name, number: contact.number, relationship: contact.relationship || '' })
+    setEditId(contact.id)
+    setShowAdd(true)
   }
 
-  const handleCancelForm = () => {
-    setShowAddForm(false)
-    setEditingContact(null)
-  }
-
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-          <Heart className="w-8 h-8 text-pink-500" />
-        </motion.div>
-      </div>
-    )
-  }
+  const iconMap = { shield: Shield, heart: Heart, alert: AlertCircle }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link to="/"><Button variant="outline" size="icon"><ArrowLeft className="w-4 h-4" /></Button></Link>
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-500 to-rose-600 flex items-center justify-center">
-              <Phone className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Emergency Contacts</h1>
-              <p className="text-gray-600">Quick access to help when you need it most</p>
-            </div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center space-x-4">
+        <Link to="/"><button className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 transition-colors"><ArrowLeft className="w-4 h-4" /></button></Link>
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/20 animate-pulse-ring">
+            <Phone className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-display font-bold text-white">Emergency</h1>
+            <p className="text-slate-400">Quick access to help when you need it</p>
           </div>
         </div>
-        <Button
-          onClick={() => { setEditingContact(null); setShowAddForm(true) }}
-          className="bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Add Contact
-        </Button>
       </motion.div>
 
-      {/* Emergency Alert */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-        <Card className="border-red-300 bg-gradient-to-r from-red-50 to-rose-50">
-          <CardContent className="p-4">
-            <div className="flex items-start space-x-3">
-              <AlertTriangle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
+      {/* SOS Banner */}
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+        <div className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-r from-red-600/20 via-rose-600/15 to-red-600/20 border border-red-500/20">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-red-500/10 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center space-x-3">
+              <AlertTriangle className="w-8 h-8 text-red-400" />
               <div>
-                <div className="font-bold text-red-800 text-lg mb-1">In Immediate Danger?</div>
-                <p className="text-red-700 text-sm">Call <strong>112</strong> (Emergency Services) or <strong>100</strong> (Police). Your safety is the top priority.</p>
+                <h3 className="font-display font-bold text-white text-lg">In immediate danger?</h3>
+                <p className="text-sm text-red-200/70">Call emergency services immediately — your safety comes first.</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <a href="tel:112" className="flex items-center space-x-2 bg-red-500 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 hover:-translate-y-0.5">
+              <Phone className="w-4 h-4" />
+              <span>Call 112 Now</span>
+            </a>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Add/Edit Contact Form */}
-      <AnimatePresence>
-        {showAddForm && (
-          <AddContactForm
-            onSave={handleAddContact}
-            onCancel={handleCancelForm}
-            existingContact={editingContact}
-          />
-        )}
-      </AnimatePresence>
+      {/* Emergency Contacts Grid */}
+      <div>
+        <h3 className="text-lg font-display font-bold text-white mb-4">Emergency Helplines</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {defaultContacts.map((contact, i) => {
+            const Icon = iconMap[contact.icon] || Phone
+            return (
+              <motion.div key={contact.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.05 }}>
+                <a href={`tel:${contact.number}`} className="block glass-card p-4 glass-hover group cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${contact.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-white">{contact.name}</div>
+                      <div className="text-xs text-slate-400">{contact.desc}</div>
+                    </div>
+                    <div className="text-lg font-display font-bold text-white">{contact.number}</div>
+                  </div>
+                </a>
+              </motion.div>
+            )
+          })}
+        </div>
+      </div>
 
-      {/* Default Emergency Numbers */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <div className="space-y-3">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
-            <Shield className="w-5 h-5 text-red-600" />
-            <span>Emergency Numbers</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {defaultEmergencyNumbers.map((contact, index) => (
-              <EmergencyContactCard key={contact.id} contact={contact} index={index} />
+      {/* Personal Contacts */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-display font-bold text-white">Personal Contacts</h3>
+          <button onClick={() => { setShowAdd(true); setEditId(null); setForm({ name: '', number: '', relationship: '' }) }} className="flex items-center space-x-1.5 text-sm font-medium text-rose-400 hover:text-rose-300 transition-colors">
+            <Plus className="w-4 h-4" />
+            <span>Add Contact</span>
+          </button>
+        </div>
+
+        {showAdd && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="glass-card p-4 mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-white">{editId ? 'Edit Contact' : 'Add Contact'}</h4>
+              <button onClick={() => { setShowAdd(false); setEditId(null) }} className="text-slate-400 hover:text-slate-300"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+              <input type="text" placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500/50" />
+              <input type="tel" placeholder="Phone number" value={form.number} onChange={e => setForm({ ...form, number: e.target.value })} className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500/50" />
+              <input type="text" placeholder="Relationship" value={form.relationship} onChange={e => setForm({ ...form, relationship: e.target.value })} className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500/50" />
+            </div>
+            <button onClick={handleSubmit} disabled={!form.name || !form.number} className="bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:shadow-lg hover:shadow-rose-500/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+              {editId ? 'Update' : 'Save Contact'}
+            </button>
+          </motion.div>
+        )}
+
+        {personalContacts.length === 0 ? (
+          <div className="glass-card p-8 text-center">
+            <User className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+            <p className="text-sm text-slate-400 mb-1">No personal contacts yet</p>
+            <p className="text-xs text-slate-500">Add trusted contacts for quick access during emergencies</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {personalContacts.map((contact, i) => (
+              <motion.div key={contact.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
+                <div className="glass-card p-4 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+                      <User className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">{contact.name}</div>
+                      <div className="text-xs text-slate-400">{contact.relationship || 'Contact'} · {contact.number}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <a href={`tel:${contact.number}`} className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors"><Phone className="w-4 h-4" /></a>
+                    <button onClick={() => handleEdit(contact)} className="p-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"><Edit3 className="w-4 h-4" /></button>
+                    <button onClick={() => handleDelete(contact.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Safety Tips */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <div className="glass-card p-5">
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+              <CheckCircle className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="font-display font-bold text-white text-sm">Emergency Preparedness</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {[
+              'Keep emergency numbers memorized, not just saved',
+              'Share your live location with a trusted contact',
+              'Have a code word that means "call for help"',
+              'Keep important documents at a trusted person\'s home',
+              'Know the nearest police station and hospital',
+              'Keep your phone charged at all times'
+            ].map((tip, i) => (
+              <div key={i} className="flex items-start space-x-2 text-sm">
+                <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-300">{tip}</span>
+              </div>
             ))}
           </div>
         </div>
-      </motion.div>
-
-      {/* User Added Contacts */}
-      {userContacts.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <div className="space-y-3">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
-              <Heart className="w-5 h-5 text-pink-600" />
-              <span>Your Personal Contacts</span>
-              <Badge className="bg-pink-100 text-pink-800" variant="outline">{userContacts.length}</Badge>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {userContacts.map((contact, index) => (
-                <EmergencyContactCard
-                  key={contact.id}
-                  contact={contact}
-                  index={index}
-                  onEdit={handleEditContact}
-                  onDelete={handleDeleteContact}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Preparedness Tips */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <AlertCircle className="w-5 h-5 text-amber-600" />
-              <span>Emergency Preparedness Tips</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                "Keep your phone charged and emergency numbers saved",
-                "Share your location with a trusted contact when going out",
-                "Know the location of the nearest police station and hospital",
-                "Have an emergency bag ready with documents, cash, and essentials",
-                "Create a code word to signal for help without alerting others",
-                "Practice your safety plan until it becomes second nature"
-              ].map((tip, index) => (
-                <div key={index} className="flex items-start space-x-2 text-sm">
-                  <CheckCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{tip}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </motion.div>
     </div>
   )

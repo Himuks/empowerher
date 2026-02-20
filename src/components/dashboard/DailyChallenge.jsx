@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Target, CheckCircle, Zap, Gift } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Button } from '../ui/button'
-import { Badge } from '../ui/badge'
-import { mockEntityOperations, updateUserStats, logActivity } from '../../lib/utils'
+import { Zap, CheckCircle, ArrowRight } from 'lucide-react'
 import { mockChallenges } from '../../lib/mockData'
+import { mockEntityOperations, updateUserStats, logActivity } from '../../lib/utils'
 
 const DailyChallenge = () => {
   const [challenge, setChallenge] = useState(null)
@@ -13,18 +10,16 @@ const DailyChallenge = () => {
 
   useEffect(() => {
     const loadChallenge = async () => {
-      // Pick challenge based on day of year
-      const today = new Date()
-      const dayIndex = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24))
-      const todayChallenge = mockChallenges[dayIndex % mockChallenges.length]
-      setChallenge(todayChallenge)
-
-      // Check if already completed today
-      const todayStr = today.toISOString().split('T')[0]
-      const logs = await mockEntityOperations.list('DailyChallengeLog')
-      const alreadyDone = logs.find(l => l.date === todayStr)
-      if (alreadyDone) {
-        setCompleted(true)
+      const today = new Date().toDateString()
+      const existing = await mockEntityOperations.list('DailyChallenge')
+      const todayChallenge = existing.find(c => c.date === today)
+      if (todayChallenge) {
+        setChallenge(todayChallenge)
+        setCompleted(todayChallenge.completed)
+      } else {
+        const random = mockChallenges[Math.floor(Math.random() * mockChallenges.length)]
+        const created = await mockEntityOperations.create('DailyChallenge', { ...random, date: today, completed: false })
+        setChallenge(created)
       }
     }
     loadChallenge()
@@ -32,75 +27,46 @@ const DailyChallenge = () => {
 
   const handleComplete = async () => {
     if (!challenge || completed) return
-    setCompleted(true)
-
-    const todayStr = new Date().toISOString().split('T')[0]
-
-    // Log the challenge
-    await mockEntityOperations.create('DailyChallengeLog', {
-      date: todayStr,
-      title: challenge.title,
-      points: challenge.points
-    })
-
-    // Update user stats
+    await mockEntityOperations.update('DailyChallenge', challenge.id, { completed: true })
     await updateUserStats(challenge.points)
-
-    // Log activity
-    await logActivity({
-      module_type: 'daily_challenge',
-      title: challenge.title,
-      type: 'challenge',
-      points: challenge.points,
-      status: 'completed'
-    })
+    await logActivity({ module_type: 'daily_challenge', title: challenge.title, type: 'challenge', points: challenge.points, status: 'completed' })
+    setCompleted(true)
   }
 
   if (!challenge) return null
 
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 0.5 }}>
-      <Card className={`${completed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200'}`}>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-lg">
-              {completed ? (
-                <CheckCircle className="w-5 h-5 text-green-600" />
-              ) : (
-                <Target className="w-5 h-5 text-amber-600" />
-              )}
-              <span>Daily Challenge</span>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+      <div className="glass-card p-5 h-full relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-28 h-28 bg-gradient-to-br from-amber-500/15 to-orange-500/10 rounded-full blur-2xl" />
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                <Zap className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="font-display font-bold text-white text-sm">Daily Challenge</h3>
             </div>
-            <Badge className={`${completed ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`} variant="outline">
-              <Zap className="w-3 h-3 mr-1" />
-              {challenge.points} pts
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-medium text-gray-900 mb-1">{challenge.title}</h4>
-            <p className="text-sm text-gray-600">{challenge.description}</p>
+            <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full">+{challenge.points} pts</span>
           </div>
-
-          <div className="flex items-center space-x-2 text-xs text-gray-500">
-            <Gift className="w-3 h-3" />
-            <span>{challenge.category}</span>
-          </div>
-
-          {completed ? (
-            <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex items-center justify-center space-x-2 p-3 bg-green-100 rounded-lg border border-green-200">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span className="text-green-700 font-medium">Challenge Completed! +{challenge.points} pts 🎉</span>
-            </motion.div>
+          <h4 className="font-semibold text-white text-sm mb-1.5">{challenge.title}</h4>
+          <p className="text-xs text-slate-400 leading-relaxed mb-4">{challenge.description}</p>
+          {!completed ? (
+            <button
+              onClick={handleComplete}
+              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold py-2.5 rounded-xl hover:shadow-lg hover:shadow-amber-500/20 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span>Complete Challenge</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           ) : (
-            <Button onClick={handleComplete} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Mark as Completed
-            </Button>
+            <div className="flex items-center justify-center space-x-2 bg-emerald-500/10 text-emerald-400 text-sm font-semibold py-2.5 rounded-xl border border-emerald-500/20">
+              <CheckCircle className="w-4 h-4" />
+              <span>Completed! 🎉</span>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   )
 }
