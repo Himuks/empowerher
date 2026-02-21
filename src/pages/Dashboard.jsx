@@ -18,6 +18,7 @@ import QuickActions from '../components/dashboard/QuickActions'
 import AchievementBadges from '../components/dashboard/AchievementBadges'
 import RecentActivity from '../components/dashboard/RecentActivity'
 import KnowledgeQuiz from '../components/dashboard/KnowledgeQuiz'
+import WhyChooseUs from '../components/dashboard/WhyChooseUs'
 import { useAuth } from '../components/AuthContext'
 import { mockEntityOperations, getOverallProgress } from '../lib/utils'
 
@@ -170,6 +171,9 @@ const Dashboard = () => {
 
       {/* Recent Activity */}
       <RecentActivity />
+
+      {/* Why Choose Us */}
+      <WhyChooseUs />
 
       {/* CTA Banner */}
       <motion.div

@@ -21,36 +21,34 @@ const AuthModal = ({ isOpen, onClose }) => {
         setMode(m); reset()
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         setError('')
         setLoading(true)
 
-        setTimeout(() => {
-            if (mode === 'signup') {
-                if (!name.trim() || !email.trim() || !password.trim()) {
-                    setError('All fields are required.'); setLoading(false); return
-                }
-                if (password.length < 6) {
-                    setError('Password must be at least 6 characters.'); setLoading(false); return
-                }
-                const result = signup(name.trim(), email.trim(), password)
-                if (!result.success) {
-                    setError(result.error); setLoading(false); return
-                }
-            } else {
-                if (!email.trim() || !password.trim()) {
-                    setError('Email and password are required.'); setLoading(false); return
-                }
-                const result = login(email.trim(), password)
-                if (!result.success) {
-                    setError(result.error); setLoading(false); return
-                }
+        if (mode === 'signup') {
+            if (!name.trim() || !email.trim() || !password.trim()) {
+                setError('All fields are required.'); setLoading(false); return
             }
-            setLoading(false)
-            reset()
-            onClose()
-        }, 400)
+            if (password.length < 6) {
+                setError('Password must be at least 6 characters.'); setLoading(false); return
+            }
+            const result = await signup(name.trim(), email.trim(), password)
+            if (!result.success) {
+                setError(result.error); setLoading(false); return
+            }
+        } else {
+            if (!email.trim() || !password.trim()) {
+                setError('Email and password are required.'); setLoading(false); return
+            }
+            const result = await login(email.trim(), password)
+            if (!result.success) {
+                setError(result.error); setLoading(false); return
+            }
+        }
+        setLoading(false)
+        reset()
+        onClose()
     }
 
     if (!isOpen) return null
@@ -108,8 +106,8 @@ const AuthModal = ({ isOpen, onClose }) => {
                                     <button
                                         onClick={() => switchMode('login')}
                                         className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${mode === 'login'
-                                                ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white shadow-lg'
-                                                : 'text-slate-400 hover:text-slate-200'
+                                            ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white shadow-lg'
+                                            : 'text-slate-400 hover:text-slate-200'
                                             }`}
                                     >
                                         Login
@@ -117,8 +115,8 @@ const AuthModal = ({ isOpen, onClose }) => {
                                     <button
                                         onClick={() => switchMode('signup')}
                                         className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${mode === 'signup'
-                                                ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white shadow-lg'
-                                                : 'text-slate-400 hover:text-slate-200'
+                                            ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white shadow-lg'
+                                            : 'text-slate-400 hover:text-slate-200'
                                             }`}
                                     >
                                         Sign Up
@@ -129,9 +127,9 @@ const AuthModal = ({ isOpen, onClose }) => {
                                 <AnimatePresence>
                                     {error && (
                                         <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
                                             className="mb-4"
                                         >
                                             <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
@@ -147,10 +145,11 @@ const AuthModal = ({ isOpen, onClose }) => {
                                         {mode === 'signup' && (
                                             <motion.div
                                                 key="name"
-                                                initial={{ opacity: 0, height: 0 }}
-                                                animate={{ opacity: 1, height: 'auto' }}
-                                                exit={{ opacity: 0, height: 0 }}
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
                                                 transition={{ duration: 0.2 }}
+                                                className="mb-4"
                                             >
                                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">
                                                     Full Name
@@ -228,7 +227,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                                 <div className="flex items-center justify-center space-x-1.5 mt-6">
                                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                                     <span className="text-xs text-slate-500">
-                                        {mode === 'login' ? 'Login is optional — explore freely as a guest' : 'Your data stays on this device'}
+                                        {mode === 'login' ? 'Login is optional — explore freely as a guest' : 'Powered by Firebase Auth'}
                                     </span>
                                 </div>
                             </div>

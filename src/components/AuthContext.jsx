@@ -1,87 +1,114 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { auth, db } from '../firebase'
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    updateProfile
+} from 'firebase/auth'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
 
 const AuthContext = createContext(null)
-
-const AUTH_KEY = 'empowerher_auth'
-const USERS_KEY = 'empowerher_users'
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const stored = localStorage.getItem(AUTH_KEY)
-        if (stored) {
-            try {
-                setUser(JSON.parse(stored))
-            } catch { }
-        }
-        setLoading(false)
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Fetch additional user data from Firestore if needed
+                try {
+                    const docRef = doc(db, 'users', firebaseUser.uid)
+                    const docSnap = await getDoc(docRef)
+
+                    let userData = {
+                        id: firebaseUser.uid,
+                        name: firebaseUser.displayName || 'User',
+                        email: firebaseUser.email,
+                    }
+
+                    if (docSnap.exists()) {
+                        userData = { ...userData, ...docSnap.data() }
+                    }
+
+                    // Keep backward compatibility with existing Dashboard
+                    localStorage.setItem('empowerher_currentUser', JSON.stringify({
+                        id: userData.id,
+                        firstName: userData.name.split(' ')[0],
+                        lastName: userData.name.split(' ').slice(1).join(' '),
+                        email: userData.email,
+                        joinedAt: userData.joinedAt || new Date().toISOString()
+                    }))
+
+                    setUser(userData)
+                } catch (error) {
+                    console.error("Error fetching user data:", error)
+                    setUser(null)
+                }
+            } else {
+                setUser(null)
+                localStorage.removeItem('empowerher_currentUser')
+            }
+            setLoading(false)
+        })
+
+        return () => unsubscribe()
     }, [])
 
-    const getUsers = () => {
+    const signup = async (name, email, password) => {
         try {
-            return JSON.parse(localStorage.getItem(USERS_KEY) || '[]')
-        } catch { return [] }
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+            const firebaseUser = userCredential.user
+
+            // Set display name in Firebase Auth
+            await updateProfile(firebaseUser, { displayName: name })
+
+            // Save additional info in Firestore
+            const joinedAt = new Date().toISOString()
+            await setDoc(doc(db, 'users', firebaseUser.uid), {
+                name,
+                email,
+                joinedAt
+            })
+
+            return { success: true }
+        } catch (error) {
+            let errorMessage = 'An error occurred during signup.'
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = 'An account with this email already exists.'
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage = 'Password must be at least 6 characters.'
+            }
+            return { success: false, error: errorMessage }
+        }
     }
 
-    const signup = (name, email, password) => {
-        const users = getUsers()
-        if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-            return { success: false, error: 'An account with this email already exists.' }
+    const login = async (email, password) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password)
+            return { success: true }
+        } catch (error) {
+            let errorMessage = 'Invalid email or password.'
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                errorMessage = 'Invalid email or password.'
+            }
+            return { success: false, error: errorMessage }
         }
-        const newUser = {
-            id: Date.now().toString(),
-            name,
-            email,
-            password,
-            joinedAt: new Date().toISOString()
-        }
-        users.push(newUser)
-        localStorage.setItem(USERS_KEY, JSON.stringify(users))
-
-        const authUser = { id: newUser.id, name: newUser.name, email: newUser.email, joinedAt: newUser.joinedAt }
-        localStorage.setItem(AUTH_KEY, JSON.stringify(authUser))
-        // Also update the app-level user so Dashboard picks up the name
-        localStorage.setItem('empowerher_currentUser', JSON.stringify({
-            id: authUser.id,
-            firstName: name.split(' ')[0],
-            lastName: name.split(' ').slice(1).join(' '),
-            email: authUser.email,
-            joinedAt: authUser.joinedAt
-        }))
-        setUser(authUser)
-        return { success: true }
     }
 
-    const login = (email, password) => {
-        const users = getUsers()
-        const found = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password)
-        if (!found) {
-            return { success: false, error: 'Invalid email or password.' }
+    const logout = async () => {
+        try {
+            await signOut(auth)
+        } catch (error) {
+            console.error('Logout error:', error)
         }
-        const authUser = { id: found.id, name: found.name, email: found.email, joinedAt: found.joinedAt }
-        localStorage.setItem(AUTH_KEY, JSON.stringify(authUser))
-        localStorage.setItem('empowerher_currentUser', JSON.stringify({
-            id: authUser.id,
-            firstName: found.name.split(' ')[0],
-            lastName: found.name.split(' ').slice(1).join(' '),
-            email: authUser.email,
-            joinedAt: authUser.joinedAt
-        }))
-        setUser(authUser)
-        return { success: true }
-    }
-
-    const logout = () => {
-        localStorage.removeItem(AUTH_KEY)
-        localStorage.removeItem('empowerher_currentUser')
-        setUser(null)
     }
 
     return (
         <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, signup, logout, loading }}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     )
 }

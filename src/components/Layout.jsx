@@ -44,7 +44,7 @@ const Layout = ({ children }) => {
   }, [userMenuOpen])
 
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home, gradient: 'from-rose-500 to-pink-600' },
+    { name: 'Home', href: '/', icon: Home, gradient: 'from-rose-500 to-pink-600' },
     { name: 'Legal Rights', href: '/legal-rights', icon: Scale, gradient: 'from-blue-500 to-cyan-500' },
     { name: 'Voice Training', href: '/voice-training', icon: MessageCircle, gradient: 'from-violet-500 to-purple-600' },
     { name: 'Self Defense', href: '/self-defense', icon: Shield, gradient: 'from-emerald-500 to-green-600' },
@@ -127,7 +127,7 @@ const Layout = ({ children }) => {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
         <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] px-3 mb-4">
-          Modules
+          DASHBOARD
         </div>
         {navigation.map((item) => {
           const Icon = item.icon
@@ -278,10 +278,10 @@ const Layout = ({ children }) => {
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
             >
               {children}
             </motion.div>

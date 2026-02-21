@@ -145,7 +145,7 @@ const VoiceExercise = ({ standalone = false, lessonId = "", lessonTitle = "", on
 
             <AnimatePresence>
               {(transcript || feedback) && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="overflow-hidden">
                   <div className="p-4 bg-slate-800/30 rounded-xl border border-white/[0.06] space-y-3">
                     <div><div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Your Speech</div><p className="text-sm text-slate-300 italic">{transcript || "..."}</p></div>
                     {feedback && (

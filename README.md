@@ -8,39 +8,45 @@ A comprehensive, beautifully designed web application dedicated to empowering wo
 
 ## 🌟 Features
 
-### Core Training Modules
-- **📚 Legal Rights & Procedures**: Interactive story-based lessons teaching legal rights and procedures
-- **🗣️ Voice Assertiveness Training**: Practice exercises for confident communication and boundary setting
-- **🛡️ Self Defense Training**: Essential self-defense techniques with step-by-step guides
+### 🤖 AI-Powered Support
+- **Gemini Cloud AI Chat**: Empathetic, context-aware floating AI assistant powered by Google's Gemini 2.5 Flash API.
+- **Smart Formatting**: AI responses include real-time streaming, markdown support, and error handling.
 
-### Dashboard & Progress Tracking
-- **📊 Real-time Progress Tracking**: Visual progress indicators across all modules
-- **🏆 Achievement System**: Unlockable badges and level progression
-- **🔥 Streak Counter**: Daily learning streak tracking with motivational elements
-- **⭐ Confidence Tracking**: Self-assessment tools for building confidence
+### 🔐 Frontend-Only Authentication
+- **Secure Local Storage Auth**: fully functional login, signup, and logout flows without needing a backend.
+- **Personalized Experience**: User names and progress are saved and reflected across the personalized dashboard.
+- **Animated Auth Modal**: Premium glassmorphic modal with smooth tab switching.
 
-### Resources & Support
-- **📖 Educational Resources**: Downloadable guides, checklists, and workbooks
-- **📞 Support Helplines**: Quick access to professional support services
-- **🚨 Emergency Contacts**: Customizable emergency contact management
-- **💡 Daily Challenges**: Engaging daily tasks for skill reinforcement
+### 🎓 Core Training Modules
+- **🛡️ Interactive Self Defense**: High-end visual grid of techniques with an immersive, full-screen interactive viewer.
+- **📚 Legal Rights & Procedures**: Interactive story-based lessons teaching legal rights and procedures.
+- **🗣️ Voice Assertiveness Training**: Practice exercises for confident communication and boundary setting with live feedback simulations.
 
-### User Experience
-- **🎨 Elegant Design**: High-end, modern UI with sophisticated typography and color schemes
-- **📱 Fully Responsive**: Seamless experience across desktop, tablet, and mobile devices
-- **⚡ Smooth Animations**: Framer Motion powered transitions and micro-interactions
-- **🎯 Gamification**: Points, levels, badges, and streak counters for engagement
+### 🤝 Community & Support
+- **Community Forums**: Interactive discussion threads, replies, and like functionality.
+- **Counselor Directory**: Browse and connect with verified professional support.
+- **Resource Requests**: Functional form for users to request new materials.
+- **Expert Articles**: Full-length readable articles on confidence and safety.
+
+### 📱 Premium UX & Mobile Optimization
+- **Dark Glassmorphic UI**: High-end dark theme with frosted glass effects, vibrant gradients, and abstract floating orbs.
+- **Buttery Smooth Animations**: Framer Motion handles complex layout transitions, staggered lists, and route changes.
+- **Mobile-First Performance**: React.lazy code-splitting, transformed-based CSS animations (avoiding layout thrashing), and perfectly responsive chat bounds.
+
+### 📊 Dashboard & Progress Tracking
+- **Real-time Progress Tracking**: Visual progress indicators across all modules.
+- **Achievement System**: Unlockable badges and level progression.
+- **Daily Challenges**: Engaging daily tasks for skill reinforcement.
 
 ## 🛠️ Technology Stack
 
 - **Frontend Framework**: React 18.2.0
-- **Styling**: Tailwind CSS 3.4.0 with custom design system
-- **UI Components**: Shadcn/ui for high-quality, accessible components
-- **Icons**: Lucide React for beautiful, consistent iconography
-- **Animations**: Framer Motion for smooth transitions and interactions
-- **Routing**: React Router DOM for client-side navigation
-- **State Management**: React hooks and local storage for data persistence
-- **Development**: React Scripts for build tooling
+- **Styling**: Tailwind CSS 3.4.0 with comprehensive custom utility classes
+- **Animations**: Framer Motion for hardware-accelerated transitions
+- **Artificial Intelligence**: `@google/genai` SDK
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
+- **Deployment**: Firebase Hosting
 
 ## 🚀 Getting Started
 

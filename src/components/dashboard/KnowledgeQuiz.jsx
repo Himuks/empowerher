@@ -286,7 +286,7 @@ const KnowledgeQuiz = () => {
                                 </div>
 
                                 {showExplanation && (
-                                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3">
+                                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mt-3">
                                         <p className="text-xs text-slate-400 bg-slate-800/30 p-3 rounded-lg border border-slate-700/30">{q.explanation}</p>
                                         <button
                                             onClick={nextQuestion}
