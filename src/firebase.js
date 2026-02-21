@@ -4,7 +4,7 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDkqIi70Ie_N_Ye8GavPu6_M-pP7TMBjc4",
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: "empowerher-3789a.firebaseapp.com",
     projectId: "empowerher-3789a",
     storageBucket: "empowerher-3789a.firebasestorage.app",
